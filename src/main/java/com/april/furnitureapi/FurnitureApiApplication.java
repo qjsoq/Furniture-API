@@ -12,9 +12,6 @@ public class FurnitureApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(FurnitureApiApplication.class, args);
     }
-    @Bean
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+
 
 }
