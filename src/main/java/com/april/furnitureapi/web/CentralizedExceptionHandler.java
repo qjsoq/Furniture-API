@@ -1,10 +1,15 @@
 package com.april.furnitureapi.web;
 
+import com.april.furnitureapi.exception.InvalidPasswordException;
+import com.april.furnitureapi.exception.UserAlreadyExistsException;
+import com.april.furnitureapi.exception.UserNotFoundException;
+import com.april.furnitureapi.web.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
@@ -18,6 +23,17 @@ public class CentralizedExceptionHandler {
         Map<String, List<String>> errors = exception.getFieldErrors()
                 .stream()
                 .collect(Collectors.groupingBy(FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())));
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errors);
+    }
+    @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class})
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException){
+        return new ErrorResponse(runtimeException.getLocalizedMessage());
+    }
+
+    @ExceptionHandler({UserNotFoundException.class})
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException){
+        return new ErrorResponse(runtimeException.getMessage());
     }
 }
