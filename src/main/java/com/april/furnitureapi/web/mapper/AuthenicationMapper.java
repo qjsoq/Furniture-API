@@ -1,6 +1,6 @@
 package com.april.furnitureapi.web.mapper;
 
-import com.april.furnitureapi.web.dto.user.auth.AuthenticationResponse;
+import com.april.furnitureapi.web.dto.auth.AuthenticationResponse;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

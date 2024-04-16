@@ -21,7 +21,6 @@ public class JwtTokenProvider {
     @Value(("${jwt.issuer}"))
     String jwtIssuer;
     public String generateToken(User user){
-        System.out.println(jwtSecret + "----------------1");
         return JWT.create()
                 .withIssuer(jwtIssuer)
                 .withSubject(user.getEmail())
@@ -35,7 +34,6 @@ public class JwtTokenProvider {
 
     public Optional<DecodedJWT> decodedJwt(String token){
         try {
-            System.out.println(jwtSecret + " ---------------2");
             return Optional.of(JWT.require(Algorithm.HMAC512(jwtSecret))
                     .withIssuer(jwtIssuer)
                     .build()
@@ -43,5 +41,12 @@ public class JwtTokenProvider {
         } catch (JWTVerificationException exception) {
             return Optional.empty();
         }
+    }
+    public String getEmailFromToken(String token){
+        return JWT.require(Algorithm.HMAC512(jwtSecret))
+                .withIssuer(jwtIssuer)
+                .build()
+                .verify(token)
+                .getSubject();
     }
 }
