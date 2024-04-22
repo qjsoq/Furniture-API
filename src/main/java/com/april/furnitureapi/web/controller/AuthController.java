@@ -1,17 +1,15 @@
 package com.april.furnitureapi.web.controller;
 
-import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.service.UserService;
 
 import com.april.furnitureapi.web.dto.user.UserCreationDto;
 import com.april.furnitureapi.web.dto.user.UserDto;
-import com.april.furnitureapi.web.dto.user.auth.AuthenticationRequest;
-import com.april.furnitureapi.web.dto.user.auth.AuthenticationResponse;
+import com.april.furnitureapi.web.dto.auth.AuthenticationRequest;
+import com.april.furnitureapi.web.dto.auth.AuthenticationResponse;
 import com.april.furnitureapi.web.mapper.AuthenicationMapper;
 import com.april.furnitureapi.web.mapper.Usermapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.control.MappingControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +22,7 @@ import static com.april.furnitureapi.web.WebConstants.*;
 
 
 @RestController
-@RequestMapping(path = AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = API + AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
