@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
+import static com.april.furnitureapi.web.WebConstants.API;
+
 @RestController
-@RequestMapping(path = "/users",  produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = API + "/users",  produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class UserController {
     UserService userService;
