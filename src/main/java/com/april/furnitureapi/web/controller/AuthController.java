@@ -22,7 +22,7 @@ import static com.april.furnitureapi.web.WebConstants.*;
 
 
 @RestController
-@RequestMapping(path = AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = API + AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;

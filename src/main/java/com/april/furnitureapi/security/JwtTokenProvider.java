@@ -9,8 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Optional;
 
 @Component
@@ -20,33 +25,41 @@ public class JwtTokenProvider {
     String jwtSecret;
     @Value(("${jwt.issuer}"))
     String jwtIssuer;
-    public String generateToken(User user){
+
+    public String generateToken(User user) {
         return JWT.create()
                 .withIssuer(jwtIssuer)
                 .withSubject(user.getEmail())
                 .withClaim("lastname", user.getLastname())
-                .withExpiresAt(LocalDate.now()
-                        .plusDays(15)
-                        .atStartOfDay(ZoneId.systemDefault())
-                        .toInstant())
+                .withExpiresAt(
+                        setTime())
                 .sign(Algorithm.HMAC512(jwtSecret));
     }
 
-    public Optional<DecodedJWT> decodedJwt(String token){
-        try {
-            return Optional.of(JWT.require(Algorithm.HMAC512(jwtSecret))
-                    .withIssuer(jwtIssuer)
-                    .build()
-                    .verify(token));
-        } catch (JWTVerificationException exception) {
-            return Optional.empty();
-        }
+    public Optional<DecodedJWT> decodedJwt(String token) throws JWTVerificationException {
+        return Optional.of(JWT.require(Algorithm.HMAC512(jwtSecret))
+                .withIssuer(jwtIssuer)
+                .build()
+                .verify(token));
     }
-    public String getEmailFromToken(String token){
+
+    public String getEmailFromToken(String token) {
         return JWT.require(Algorithm.HMAC512(jwtSecret))
                 .withIssuer(jwtIssuer)
                 .build()
                 .verify(token)
                 .getSubject();
     }
+
+    private Instant setTime() {
+        LocalDateTime dateTime = LocalDateTime.now();
+        for(var temp : ZoneId.SHORT_IDS.keySet()){
+            LocalDateTime dateTime1 = LocalDateTime.now();
+            System.out.println(dateTime1.atZone(ZoneId.of(ZoneId.SHORT_IDS.get(temp))));
+            System.out.println(temp);
+        }
+        Instant instant = dateTime.atZone(ZoneId.of("Europe/Paris")).toInstant();
+        return instant.plus(7, ChronoUnit.DAYS);
+    }
+
 }
