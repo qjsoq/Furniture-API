@@ -8,6 +8,6 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AuthenicationMapper {
-    @Mapping(target = "expires", expression = "java(decodedJWT.getExpiresAt().getTime() / 1000)")
+    @Mapping(target = "expires", expression = "java(decodedJWT.getExpiresAt())")
     AuthenticationResponse toAuthResponse(DecodedJWT decodedJWT);
 }
