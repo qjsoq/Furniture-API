@@ -4,6 +4,7 @@ import com.april.furnitureapi.exception.InvalidPasswordException;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.web.dto.ErrorResponse;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -35,5 +36,11 @@ public class CentralizedExceptionHandler {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getMessage());
+    }
+
+    @ExceptionHandler({JWTVerificationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse JwtVerificationExceptionHandler(RuntimeException runtimeException){
+        return new ErrorResponse(runtimeException.getMessage() + " provided token not valid(");
     }
 }
