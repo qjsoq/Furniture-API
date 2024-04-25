@@ -2,15 +2,14 @@ package com.april.furnitureapi.web.controller;
 
 import com.april.furnitureapi.service.UserService;
 import com.april.furnitureapi.web.dto.user.UserDto;
+import com.april.furnitureapi.web.dto.user.UserUpdateDto;
 import com.april.furnitureapi.web.mapper.Usermapper;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -25,9 +24,16 @@ public class UserController {
 
     @GetMapping("/self")
     public ResponseEntity<UserDto> getSelf(Principal principal){
-        System.out.println(principal.getName());
         var user = userService.findByEmail(principal.getName());
         return ResponseEntity.ok().body(usermapper.toPayload(user));
+    }
+
+    @PatchMapping("/self")
+    public ResponseEntity<UserDto> updateSelf(Principal principal, @RequestBody @Valid UserUpdateDto updateDto){
+        var user = userService.findByEmail(principal.getName());
+        System.out.println(user.getEmail());
+        var updatedUser = userService.updateUser(usermapper.partialUpdate(updateDto, user));
+        return ResponseEntity.ok(usermapper.toPayload(updatedUser));
     }
 
 }

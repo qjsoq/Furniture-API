@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User signUp(User user) {
-        if(userRepository.existsByEmailOrUsername(user.getEmail(), user.getUsername())){
-            throw new UserAlreadyExistsException("User with provided email or username already exists");
-        }
+        checkIfUserExists(user);
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -48,6 +47,28 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with provided email %s doesn't exist", email)));
+    }
+    @Override
+    public User updateUser(User user){
+        checkIfUserExists(user);
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+    public void checkIfUserExists(User user){
+        var email = user.getEmail();
+        var username = user.getUsername();
+        var id = user.getId();
+        if(isEmailInUse(email, id)){
+            throw new UserAlreadyExistsException("User with provided email %s exists".formatted(email));
+        } else if (isUserNamelInUse(username, id)) {
+            throw new UserAlreadyExistsException("User with provided username %s exists".formatted(username));
+        }
+    }
+    private boolean isEmailInUse(String email, UUID id){
+        return userRepository.findByEmail(email).filter(foundedUser -> foundedUser.getId() != id).isPresent();
+    }
+    private boolean isUserNamelInUse(String username, UUID id){
+        return userRepository.findByUsername(username).filter(foundedUser -> foundedUser.getId() != id).isPresent();
     }
 
 
