@@ -6,9 +6,12 @@ import com.april.furnitureapi.exception.InvalidPasswordException;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.security.JwtTokenProvider;
+import com.april.furnitureapi.service.EmailService;
 import com.april.furnitureapi.service.UserService;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final EmailService emailService;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
     public User signUp(User user) {
         checkIfUserExists(user);
         user.setPassword(encoder.encode(user.getPassword()));
+        emailService.sendVerificationEmail(user);
         return userRepository.save(user);
     }
 
@@ -60,14 +65,14 @@ public class UserServiceImpl implements UserService {
         var id = user.getId();
         if(isEmailInUse(email, id)){
             throw new UserAlreadyExistsException("User with provided email %s exists".formatted(email));
-        } else if (isUserNamelInUse(username, id)) {
+        } else if (isUserNameInUse(username, id)) {
             throw new UserAlreadyExistsException("User with provided username %s exists".formatted(username));
         }
     }
     private boolean isEmailInUse(String email, UUID id){
         return userRepository.findByEmail(email).filter(foundedUser -> foundedUser.getId() != id).isPresent();
     }
-    private boolean isUserNamelInUse(String username, UUID id){
+    private boolean isUserNameInUse(String username, UUID id){
         return userRepository.findByUsername(username).filter(foundedUser -> foundedUser.getId() != id).isPresent();
     }
 
