@@ -26,4 +26,6 @@ public class User {
     String username;
     String email;
     String password;
+    @Column(name = "verified")
+    boolean isVerified;
 }
