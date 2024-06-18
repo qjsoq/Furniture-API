@@ -53,11 +53,6 @@ public class JwtTokenProvider {
 
     private Instant setTime() {
         LocalDateTime dateTime = LocalDateTime.now();
-        for(var temp : ZoneId.SHORT_IDS.keySet()){
-            LocalDateTime dateTime1 = LocalDateTime.now();
-            System.out.println(dateTime1.atZone(ZoneId.of(ZoneId.SHORT_IDS.get(temp))));
-            System.out.println(temp);
-        }
         Instant instant = dateTime.atZone(ZoneId.of("Europe/Paris")).toInstant();
         return instant.plus(7, ChronoUnit.DAYS);
     }
