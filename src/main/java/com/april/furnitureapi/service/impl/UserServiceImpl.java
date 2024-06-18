@@ -1,6 +1,8 @@
 package com.april.furnitureapi.service.impl;
 
+import com.april.furnitureapi.data.ConfirmationRepository;
 import com.april.furnitureapi.data.UserRepository;
+import com.april.furnitureapi.domain.Confirmation;
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.exception.InvalidPasswordException;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final UserRepository userRepository;
+    private final ConfirmationRepository confirmationRepository;
     private final PasswordEncoder encoder;
     private final JwtTokenProvider jwtTokenProvider;
     @Override
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     public User signUp(User user) {
         checkIfUserExists(user);
         user.setPassword(encoder.encode(user.getPassword()));
+        confirmationRepository.save(new Confirmation(user));
         emailService.sendVerificationEmail(user);
         return userRepository.save(user);
     }
