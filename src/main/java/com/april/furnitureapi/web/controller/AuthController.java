@@ -6,18 +6,18 @@ import com.april.furnitureapi.web.dto.user.UserCreationDto;
 import com.april.furnitureapi.web.dto.user.UserDto;
 import com.april.furnitureapi.web.dto.auth.AuthenticationRequest;
 import com.april.furnitureapi.web.dto.auth.AuthenticationResponse;
+import com.april.furnitureapi.web.dto.verification.VerificationDto;
 import com.april.furnitureapi.web.mapper.AuthenicationMapper;
 import com.april.furnitureapi.web.mapper.Usermapper;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import static com.april.furnitureapi.web.WebConstants.*;
 
 
@@ -31,7 +31,7 @@ public class AuthController {
     private final JavaMailSender javaMailSender;
 
     @PostMapping(SIGN_UP)
-    public ResponseEntity<UserDto> signUp(@Valid @RequestBody UserCreationDto userCreationDto){
+    public ResponseEntity<UserDto> signUp(@Valid @RequestBody UserCreationDto userCreationDto) {
         var newUser = userService.signUp(usermapper.toEntity(userCreationDto));
         return new ResponseEntity<>(usermapper.toPayload(newUser), HttpStatus.CREATED);
     }
@@ -42,5 +42,15 @@ public class AuthController {
         return ResponseEntity.of(userService
                 .signIn(request.getEmail(), request.getPassword())
                 .map(authenicationMapper::toAuthResponse));
+    }
+    @GetMapping("/")
+    public ResponseEntity<VerificationDto> verifyToken(@RequestParam("token") String token){
+        var verify = userService.verifyToken(token);
+        return ResponseEntity.ok().body(
+                VerificationDto.builder()
+                        .message("Account was successfully verified")
+                        .isVerified(verify)
+                        .build()
+        );
     }
 }

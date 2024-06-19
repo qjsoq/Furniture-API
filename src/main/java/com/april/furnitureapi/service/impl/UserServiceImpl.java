@@ -11,6 +11,7 @@ import com.april.furnitureapi.security.JwtTokenProvider;
 import com.april.furnitureapi.service.EmailService;
 import com.april.furnitureapi.service.UserService;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,11 +32,12 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
     @Override
     @Transactional
-    public User signUp(User user) {
+    public User signUp(User user){
         checkIfUserExists(user);
         user.setPassword(encoder.encode(user.getPassword()));
-        confirmationRepository.save(new Confirmation(user));
-        emailService.sendVerificationEmail(user);
+        var confirmation = new Confirmation(user);
+        confirmationRepository.save(confirmation);
+        emailService.sendVerificationEmail(user, confirmation.getToken());
         return userRepository.save(user);
     }
 
@@ -63,6 +65,15 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+
+    @Override
+    public boolean verifyToken(String token) {
+        var user = confirmationRepository.findByToken(token).getUser();
+        user.setVerified(true);
+        userRepository.save(user);
+        return true;
+    }
+
     public void checkIfUserExists(User user){
         var email = user.getEmail();
         var username = user.getUsername();

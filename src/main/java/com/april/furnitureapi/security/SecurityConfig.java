@@ -35,14 +35,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(HttpMethod.POST, API + AUTH + SIGN_UP).anonymous()
-                    .requestMatchers(HttpMethod.POST, API + AUTH + SIGN_IN).anonymous()
-                    .anyRequest().authenticated())
+                        .requestMatchers(API + AUTH + "/**").permitAll() // Ensure this is allowing everything under /api/v1/auth/
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
