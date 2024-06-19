@@ -5,6 +5,7 @@ import com.april.furnitureapi.exception.UserAlreadyExistsException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.web.dto.ErrorResponse;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
