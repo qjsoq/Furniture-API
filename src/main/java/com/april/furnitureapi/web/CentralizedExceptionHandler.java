@@ -1,6 +1,7 @@
 package com.april.furnitureapi.web;
 
 import com.april.furnitureapi.exception.InvalidPasswordException;
+import com.april.furnitureapi.exception.InvalidTokenException;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.web.dto.ErrorResponse;
@@ -27,7 +28,7 @@ public class CentralizedExceptionHandler {
                 .collect(Collectors.groupingBy(FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())));
         return ResponseEntity.badRequest().body(errors);
     }
-    @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class})
+    @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class, InvalidTokenException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getLocalizedMessage());
