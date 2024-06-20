@@ -5,6 +5,7 @@ import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.domain.Confirmation;
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.exception.InvalidPasswordException;
+import com.april.furnitureapi.exception.InvalidTokenException;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.security.JwtTokenProvider;
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean verifyToken(String token) {
-        var user = confirmationRepository.findByToken(token).getUser();
+        var user = tokenValidation(token).orElseThrow(()-> new InvalidTokenException("Token for email verification is not valid")).getUser();
         user.setVerified(true);
         userRepository.save(user);
         return true;
@@ -91,5 +92,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username).filter(foundedUser -> foundedUser.getId() != id).isPresent();
     }
 
+    private Optional<Confirmation> tokenValidation(String token){
+        var isConfirmation = confirmationRepository.findByToken(token);
+        return Optional.ofNullable(isConfirmation);
+    }
 
 }
