@@ -44,13 +44,12 @@ public class AuthController {
                 .map(authenicationMapper::toAuthResponse));
     }
     @GetMapping("/")
-    public ResponseEntity<VerificationDto> verifyToken(@RequestParam("token") String token){
-        var verify = userService.verifyToken(token);
-        return ResponseEntity.ok().body(
-                VerificationDto.builder()
-                        .message("Account was successfully verified")
-                        .isVerified(verify)
-                        .build()
+    public ResponseEntity<VerificationDto> verifyToken(@RequestParam("token") String token) {
+        boolean isVerified = userService.verifyToken(token);  // Assuming verifyToken returns a boolean
+        return ResponseEntity.ok().body(VerificationDto.builder()
+                .message("Your account was successfully verified!")
+                .isVerified(isVerified)
+                .build()
         );
     }
 }
