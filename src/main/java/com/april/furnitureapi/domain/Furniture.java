@@ -21,8 +21,9 @@ public class Furniture {
     String title;
     @Column(name = "description")
     String description;
-
     @Column(name = "rating")
     String rating;
-
+    @ManyToOne(targetEntity = User.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "creator_id")
+    User creator;
 }
