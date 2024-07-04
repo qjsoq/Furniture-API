@@ -9,8 +9,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import java.lang.annotation.Target;
-
 @Mapper(componentModel = "spring")
 public interface Usermapper {
     User toEntity(UserCreationDto creationDto);
