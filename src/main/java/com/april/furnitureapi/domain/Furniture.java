@@ -23,6 +23,8 @@ public class Furniture {
     String description;
     @Column(name = "rating")
     String rating;
+    @Column(name = "vendor_code")
+    String vendorCode;
     @ManyToOne(targetEntity = User.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "creator_id")
     User creator;
