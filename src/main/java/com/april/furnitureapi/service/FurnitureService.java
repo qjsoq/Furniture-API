@@ -1,7 +1,6 @@
 package com.april.furnitureapi.service;
 
 import com.april.furnitureapi.domain.Furniture;
-
 import java.util.*;
 
 public interface FurnitureService {
