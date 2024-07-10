@@ -3,7 +3,6 @@ package com.april.furnitureapi.web;
 import com.april.furnitureapi.exception.*;
 import com.april.furnitureapi.web.dto.ErrorResponse;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -25,7 +24,8 @@ public class CentralizedExceptionHandler {
                 .collect(Collectors.groupingBy(FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())));
         return ResponseEntity.badRequest().body(errors);
     }
-    @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class, InvalidTokenException.class, VendorCodeAlreadyExists.class})
+    @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class, InvalidTokenException.class,
+            VendorCodeAlreadyExists.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getLocalizedMessage());
@@ -41,5 +41,11 @@ public class CentralizedExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse JwtVerificationExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getMessage() + " provided token not valid(");
+    }
+
+    @ExceptionHandler({UserIsNotVerifiedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse userVerificationHandler(RuntimeException runtimeException){
+        return new ErrorResponse(runtimeException.getMessage());
     }
 }
