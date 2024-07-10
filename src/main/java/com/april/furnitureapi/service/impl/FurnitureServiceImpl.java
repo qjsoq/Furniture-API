@@ -7,6 +7,7 @@ import com.april.furnitureapi.exception.VendorCodeAlreadyExists;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class FurnitureServiceImpl implements FurnitureService {
     private FurnitureRepository furnitureRepository;
     private UserService userService;
     @Override
+    @PreAuthorize("@isUserVerified.isEmailVerified(authentication.name)")
     public Furniture saveFurniture(Furniture furniture, String email) {
         furniture.setCreator(userService.findByEmail(email));
         furniture.setVendorCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000));
