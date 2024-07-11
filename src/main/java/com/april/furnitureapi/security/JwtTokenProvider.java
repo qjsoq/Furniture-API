@@ -31,8 +31,7 @@ public class JwtTokenProvider {
                 .withIssuer(jwtIssuer)
                 .withSubject(user.getEmail())
                 .withClaim("lastname", user.getLastname())
-                .withExpiresAt(
-                        setTime())
+                .withExpiresAt(setTime())
                 .sign(Algorithm.HMAC512(jwtSecret));
     }
 
