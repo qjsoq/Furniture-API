@@ -1,6 +1,7 @@
 package com.april.furnitureapi.security;
 
-import lombok.AllArgsConstructor;
+import com.april.furnitureapi.data.RoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,10 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static com.april.furnitureapi.web.WebConstants.*;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-    private JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

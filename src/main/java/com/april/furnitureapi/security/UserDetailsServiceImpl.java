@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,15 +22,9 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findByEmail(username).orElseThrow(() ->
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email).orElseThrow(() ->
                 new UserNotFoundException("User with provided email not found"));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapToGranted(user.getRoles()));
     }
 
-    private Collection<GrantedAuthority> mapToGranted(Set<Role> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-    }
 }
