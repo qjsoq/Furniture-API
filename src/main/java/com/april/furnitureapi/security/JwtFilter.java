@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -23,9 +24,11 @@ import static org.springframework.util.StringUtils.hasText;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
     private final HandlerExceptionResolver exceptionResolver;
+    private final UserDetailsService userDetailsService;
 
-    public JwtFilter(JwtTokenProvider tokenProvider, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
+    public JwtFilter(JwtTokenProvider tokenProvider, UserDetailsService userDetailsService, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
         this.tokenProvider = tokenProvider;
+        this.userDetailsService = userDetailsService;
         this.exceptionResolver = exceptionResolver;
     }
 
@@ -41,7 +44,8 @@ public class JwtFilter extends OncePerRequestFilter {
             Optional<DecodedJWT> decodedJWT = tokenProvider.decodedJwt(presentToken);
             if(decodedJWT.isPresent()){
                 String email = tokenProvider.getEmailFromToken(presentToken);
-                var authentication = new UsernamePasswordAuthenticationToken(email, null,  Arrays.asList());
+                var user = userDetailsService.loadUserByUsername(email);
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (JWTVerificationException e) {

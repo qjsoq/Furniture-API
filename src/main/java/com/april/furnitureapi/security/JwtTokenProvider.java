@@ -1,5 +1,6 @@
 package com.april.furnitureapi.security;
 
+import com.april.furnitureapi.domain.Role;
 import com.april.furnitureapi.domain.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class JwtTokenProvider {
                 .withIssuer(jwtIssuer)
                 .withSubject(user.getEmail())
                 .withClaim("lastname", user.getLastname())
+                //.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                 .withExpiresAt(setTime())
                 .sign(Algorithm.HMAC512(jwtSecret));
     }

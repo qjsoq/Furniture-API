@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 import static com.april.furnitureapi.web.WebConstants.*;
 
 
