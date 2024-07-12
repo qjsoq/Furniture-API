@@ -20,7 +20,7 @@ public class FurnitureServiceImpl implements FurnitureService {
     private FurnitureRepository furnitureRepository;
     private UserService userService;
     @Override
-    @PreAuthorize("@isUserVerified.isEmailVerified(authentication.name)")
+    @PreAuthorize("@isUserVerified.isEmailVerified(authentication.name) and hasRole('ROLE_ADMIN')")
     public Furniture saveFurniture(Furniture furniture, String email) {
         furniture.setCreator(userService.findByEmail(email));
         furniture.setVendorCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000));
