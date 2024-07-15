@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class CentralizedExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<Map<String, List<String>>> argumentNotValid(MethodArgumentNotValidException exception){
         Map<String, List<String>> errors = exception.getFieldErrors()
                 .stream()
@@ -25,7 +25,7 @@ public class CentralizedExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
     @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class, InvalidTokenException.class,
-            VendorCodeAlreadyExists.class})
+            VendorCodeAlreadyExists.class, InvalidCategoryValueException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getLocalizedMessage());
