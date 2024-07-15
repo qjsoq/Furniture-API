@@ -28,4 +28,7 @@ public class Furniture {
     @ManyToOne(targetEntity = User.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "creator_id")
     User creator;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    FurnitureCategory category;
 }
