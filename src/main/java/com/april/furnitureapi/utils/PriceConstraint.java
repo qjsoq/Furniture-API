@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PriceConstraint {
-    String message() default "Invalid phone number";
+    String message() default "Provided price is not valid";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
