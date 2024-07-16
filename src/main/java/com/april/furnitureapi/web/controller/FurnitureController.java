@@ -1,21 +1,20 @@
 package com.april.furnitureapi.web.controller;
 
+import com.april.furnitureapi.domain.FurnitureCategory;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.web.dto.furniture.FurnitureCreationDto;
 import com.april.furnitureapi.web.dto.furniture.FurnitureDetailedDto;
 import com.april.furnitureapi.web.dto.furniture.FurnitureDto;
 import com.april.furnitureapi.web.mapper.FurnitureMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.net.URI;
 import java.security.Principal;
-
 import static com.april.furnitureapi.web.WebConstants.API;
 
 @RestController
@@ -24,6 +23,8 @@ import static com.april.furnitureapi.web.WebConstants.API;
 public class FurnitureController {
     FurnitureMapper furnitureMapper;
     FurnitureService furnitureService;
+    ObjectMapper objectMapper;
+
     @PostMapping
     public ResponseEntity<FurnitureDto> saveFurniture(@RequestBody @Valid FurnitureCreationDto creationDto,
                                                       Principal principal){
@@ -44,6 +45,14 @@ public class FurnitureController {
     public ResponseEntity<FurnitureDetailedDto> getFurnitureByVendorCode(@PathVariable String vendorCode){
         return ResponseEntity.ok(
                 furnitureMapper.furnitureToDetailedDto(furnitureService.findByVendorCode(vendorCode))
+        );
+    }
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<FurnitureDto>> getFurnitureByCategory(@PathVariable FurnitureCategory category) {
+        return ResponseEntity.ok(
+                furnitureService.findByCategory(category).stream()
+                        .map(furnitureMapper::furnitureToFurnitureDto)
+                        .toList()
         );
     }
 }
