@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.net.URI;
 import java.security.Principal;
+import java.util.Optional;
 
 import static com.april.furnitureapi.web.WebConstants.API;
 
@@ -27,10 +28,12 @@ public class FurnitureController {
     FurnitureMapper furnitureMapper;
     FurnitureService furnitureService;
 
-    @PostMapping
-    public ResponseEntity<FurnitureDto> saveFurniture(@RequestBody @Valid FurnitureCreationDto creationDto,
+    @PostMapping(value = {"","/{availability}"})
+    public ResponseEntity<FurnitureDto> saveFurniture(@PathVariable(required = false) String availability,
+                                                      @RequestBody @Valid FurnitureCreationDto creationDto,
                                                       Principal principal) {
-        var furniture = furnitureService.saveFurniture(furnitureMapper.funitureCreationToFurniture(creationDto), principal.getName());
+        var furniture = furnitureService.saveFurniture(furnitureMapper.funitureCreationToFurniture(creationDto), principal.getName()
+                , Optional.ofNullable(availability));
         return ResponseEntity.created(URI.create("")).
                 body(furnitureMapper.furnitureToFurnitureDto(furniture));
     }
