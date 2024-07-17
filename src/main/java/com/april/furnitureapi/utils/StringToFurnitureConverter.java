@@ -1,5 +1,6 @@
 package com.april.furnitureapi.utils;
 
+import com.april.furnitureapi.domain.Furniture;
 import com.april.furnitureapi.domain.FurnitureCategory;
 import com.april.furnitureapi.exception.InvalidCategoryValueException;
 import org.springframework.core.convert.converter.Converter;
