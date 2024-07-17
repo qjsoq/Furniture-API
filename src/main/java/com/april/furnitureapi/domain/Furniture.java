@@ -31,4 +31,8 @@ public class Furniture {
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
     FurnitureCategory category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "domain")
+    FurnitureDomain domain;
 }

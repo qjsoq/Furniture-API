@@ -23,7 +23,6 @@ import static com.april.furnitureapi.web.WebConstants.API;
 public class FurnitureController {
     FurnitureMapper furnitureMapper;
     FurnitureService furnitureService;
-    ObjectMapper objectMapper;
 
     @PostMapping
     public ResponseEntity<FurnitureDto> saveFurniture(@RequestBody @Valid FurnitureCreationDto creationDto,
