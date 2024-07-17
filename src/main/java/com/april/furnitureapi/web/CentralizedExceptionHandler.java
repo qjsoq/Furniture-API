@@ -25,7 +25,8 @@ public class CentralizedExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
     @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class, InvalidTokenException.class,
-            VendorCodeAlreadyExists.class, InvalidCategoryValueException.class})
+            VendorCodeAlreadyExists.class, InvalidCategoryValueException.class, InvalidDomainValueException.class,
+    InvalidAvailabilityStatus.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getLocalizedMessage());
