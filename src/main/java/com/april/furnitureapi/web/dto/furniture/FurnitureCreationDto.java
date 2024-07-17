@@ -1,6 +1,7 @@
 package com.april.furnitureapi.web.dto.furniture;
 
 import com.april.furnitureapi.domain.FurnitureCategory;
+import com.april.furnitureapi.domain.FurnitureDomain;
 import com.april.furnitureapi.utils.PriceConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,4 +25,5 @@ public class FurnitureCreationDto {
     @Range(min = 0, max = 5)
     Double rating;
     FurnitureCategory category;
+    FurnitureDomain domain;
 }

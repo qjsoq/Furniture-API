@@ -4,6 +4,7 @@ import com.april.furnitureapi.data.FurnitureRepository;
 import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.domain.Furniture;
 import com.april.furnitureapi.domain.FurnitureCategory;
+import com.april.furnitureapi.domain.FurnitureDomain;
 import com.april.furnitureapi.exception.VendorCodeAlreadyExists;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
@@ -44,5 +45,10 @@ public class FurnitureServiceImpl implements FurnitureService {
     @Override
     public List<Furniture> findByCategory(FurnitureCategory category) {
         return furnitureRepository.findByCategory(category);
+    }
+
+    @Override
+    public List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain) {
+        return furnitureRepository.findByDomainAndCategory(domain, category);
     }
 }
