@@ -1,7 +1,6 @@
 package com.april.furnitureapi.service.impl;
 
 import com.april.furnitureapi.data.FurnitureRepository;
-import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.domain.Availability;
 import com.april.furnitureapi.domain.Furniture;
 import com.april.furnitureapi.domain.FurnitureCategory;
@@ -13,10 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -56,6 +53,16 @@ public class FurnitureServiceImpl implements FurnitureService {
 
     @Override
     public List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain) {
-        return furnitureRepository.findByDomainAndCategory(domain, category);
+        return initialSorting(furnitureRepository.findByDomainAndCategory(domain, category));
+    }
+
+    private static List<Furniture> initialSorting(List<Furniture> unsortedList){
+        Map<Boolean, List<Furniture>> availabilityMap = unsortedList.stream()
+                .collect(Collectors.partitioningBy(
+                        (furniture -> furniture.getAvailability().equals(Availability.OUTSTOCK))
+                ));
+        List<Furniture> filteredList = new ArrayList<>(availabilityMap.get(false));
+        filteredList.addAll(availabilityMap.get(true));
+        return  filteredList;
     }
 }
