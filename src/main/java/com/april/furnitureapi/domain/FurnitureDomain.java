@@ -20,7 +20,7 @@ public enum FurnitureDomain {
             try {
                 return FurnitureDomain.valueOf(value);
             } catch (IllegalArgumentException e) {
-                throw new InvalidDomainValueException("Invalid category: " + value);
+                throw new InvalidDomainValueException("Invalid domain: " + value);
             }
         }
     }

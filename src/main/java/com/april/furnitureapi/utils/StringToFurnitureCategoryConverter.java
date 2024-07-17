@@ -7,7 +7,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StringToFurnitureConverter implements Converter<String, FurnitureCategory> {
+public class StringToFurnitureCategoryConverter implements Converter<String, FurnitureCategory> {
     @Override
     public FurnitureCategory convert(String source) {
         try {
