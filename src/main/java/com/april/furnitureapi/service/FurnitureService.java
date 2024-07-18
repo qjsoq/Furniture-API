@@ -11,6 +11,6 @@ public interface FurnitureService {
     List<Furniture> findAll();
     Furniture findByVendorCode(String vendorCode);
     List<Furniture> findByCategory(FurnitureCategory category);
-    List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain);
+    List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain, Optional<String> sortBy);
 
 }

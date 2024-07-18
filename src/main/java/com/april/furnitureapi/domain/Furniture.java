@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "furniture")
@@ -25,6 +28,9 @@ public class Furniture {
     String rating;
     @Column(name = "vendor_code")
     String vendorCode;
+    @CreationTimestamp
+    @Column(name = "created_at")
+    LocalDateTime createdAt;
     @ManyToOne(targetEntity = User.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "creator_id")
     User creator;

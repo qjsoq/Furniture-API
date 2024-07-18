@@ -9,6 +9,7 @@ import com.april.furnitureapi.exception.VendorCodeAlreadyExists;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -52,8 +53,8 @@ public class FurnitureServiceImpl implements FurnitureService {
     }
 
     @Override
-    public List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain) {
-        return initialSorting(furnitureRepository.findByDomainAndCategory(domain, category));
+    public List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain, Optional<String> sortBy) {
+        return initialSorting(furnitureRepository.findByDomainAndCategory(domain, category, createSortObject(sortBy.orElse("novelty"))));
     }
 
     private static List<Furniture> initialSorting(List<Furniture> unsortedList){
@@ -64,5 +65,12 @@ public class FurnitureServiceImpl implements FurnitureService {
         List<Furniture> filteredList = new ArrayList<>(availabilityMap.get(false));
         filteredList.addAll(availabilityMap.get(true));
         return  filteredList;
+    }
+    private static Sort createSortObject(String sortby){
+        return switch (sortby) {
+            case "cheap" -> Sort.by(Sort.Direction.ASC, "price");
+            case "expensive" -> Sort.by(Sort.Direction.DESC, "price");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
     }
 }
