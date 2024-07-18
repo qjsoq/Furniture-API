@@ -28,14 +28,16 @@ public class FurnitureController {
     FurnitureMapper furnitureMapper;
     FurnitureService furnitureService;
 
-    @PostMapping(value = {"","/{availability}"})
+    @PostMapping(value = {"", "/{availability}"})
     public ResponseEntity<FurnitureDto> saveFurniture(@PathVariable(required = false) String availability,
                                                       @RequestBody @Valid FurnitureCreationDto creationDto,
                                                       Principal principal) {
-        var furniture = furnitureService.saveFurniture(furnitureMapper.funitureCreationToFurniture(creationDto), principal.getName()
-                , Optional.ofNullable(availability));
+        var furniture = furnitureService.saveFurniture(furnitureMapper.funitureCreationToFurniture(creationDto),
+                principal.getName(), Optional.ofNullable(availability));
         return ResponseEntity.created(URI.create("")).
                 body(furnitureMapper.furnitureToFurnitureDto(furniture));
+
+
     }
 
     @GetMapping
@@ -62,11 +64,12 @@ public class FurnitureController {
         );
     }
 
-    @GetMapping("/{domain}/{category}")
+    @GetMapping(value = {"/{domain}/{category}", "/{domain}/{category}/{sortBy}"})
     public ResponseEntity<List<FurnitureDto>> getFurnitureByDomain(@PathVariable FurnitureDomain domain,
-                                                                   @PathVariable FurnitureCategory category) {
+                                                                   @PathVariable FurnitureCategory category,
+                                                                   @PathVariable(required = false) String sortBy) {
         return ResponseEntity.ok(
-                furnitureService.findByDomainAndCategory(category, domain).stream()
+                furnitureService.findByDomainAndCategory(category, domain, Optional.ofNullable(sortBy)).stream()
                         .map(furnitureMapper::furnitureToFurnitureDto)
                         .toList()
         );
