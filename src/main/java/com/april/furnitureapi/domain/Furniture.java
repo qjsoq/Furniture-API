@@ -45,6 +45,6 @@ public class Furniture {
     @Enumerated(EnumType.STRING)
     @Column(name = "availability")
     Availability availability;
-    @OneToMany(mappedBy = "furniture", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "furniture", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> comments = new ArrayList<>();
 }

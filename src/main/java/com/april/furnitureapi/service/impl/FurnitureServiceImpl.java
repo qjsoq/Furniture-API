@@ -3,7 +3,7 @@ package com.april.furnitureapi.service.impl;
 import com.april.furnitureapi.data.FurnitureRepository;
 import com.april.furnitureapi.domain.*;
 import com.april.furnitureapi.exception.VendorCodeAlreadyExists;
-import com.april.furnitureapi.exception.VendorCodeNotFoundException;
+import com.april.furnitureapi.exception.FurnitureNotFoundException;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,6 @@ public class FurnitureServiceImpl implements FurnitureService {
     private FurnitureRepository furnitureRepository;
     private UserService userService;
     @Override
-    @PreAuthorize("@isUserVerified.isEmailVerified(authentication.name) and hasRole('ROLE_ADMIN')")
     public Furniture saveFurniture(Furniture furniture, String email, Optional<String> availability) {
         var expectedAvailability = availability
                 .flatMap(
@@ -43,7 +42,7 @@ public class FurnitureServiceImpl implements FurnitureService {
     @Override
     public Furniture findByVendorCode(String vendorCode) {
         return furnitureRepository.findByVendorCode(vendorCode)
-                .orElseThrow(() -> new VendorCodeNotFoundException(
+                .orElseThrow(() -> new FurnitureNotFoundException(
                         "Furniture with this vendor code %s doesnt exist".formatted(vendorCode)
                 ));
     }

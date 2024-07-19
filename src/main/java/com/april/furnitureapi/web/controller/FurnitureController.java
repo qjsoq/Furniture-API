@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class FurnitureController {
     CommentMapper commentMapper;
 
     @PostMapping(value = {"", "/{availability}"})
+    @PreAuthorize("@isUserVerified.isEmailVerified(authentication.name) and hasRole('ROLE_ADMIN')")
     public ResponseEntity<FurnitureDto> saveFurniture(@PathVariable(required = false) String availability,
                                                       @RequestBody @Valid FurnitureCreationDto creationDto,
                                                       Principal principal) {
@@ -42,8 +44,6 @@ public class FurnitureController {
                 principal.getName(), Optional.ofNullable(availability));
         return ResponseEntity.created(URI.create("")).
                 body(furnitureMapper.furnitureToFurnitureDto(furniture));
-
-
     }
 
     @GetMapping
@@ -53,7 +53,7 @@ public class FurnitureController {
                 .toList();
         return ResponseEntity.ok(allFurniture);
     }
-    @PostMapping("{vendorCode}/comment")
+    @PostMapping("/comments/{vendorCode}")
     public ResponseEntity<CommentDto> addComment(@PathVariable String vendorCode,
                                                  @RequestBody @Valid CommentCreationDto creationDto,
                                                  Principal principal){
@@ -61,7 +61,7 @@ public class FurnitureController {
         return ResponseEntity.created(URI.create(""))
                 .body(commentMapper.commentToDto(comment));
     }
-    @GetMapping("{vendorCode}/comment")
+    @GetMapping("/comments/{vendorCode}")
     public ResponseEntity<List<CommentDto>> getComments(@PathVariable String vendorCode){
         return ResponseEntity.ok(
                 furnitureService.getComments(vendorCode).stream()
