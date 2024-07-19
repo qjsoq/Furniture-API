@@ -1,11 +1,9 @@
 package com.april.furnitureapi.service.impl;
 
 import com.april.furnitureapi.data.FurnitureRepository;
-import com.april.furnitureapi.domain.Availability;
-import com.april.furnitureapi.domain.Furniture;
-import com.april.furnitureapi.domain.FurnitureCategory;
-import com.april.furnitureapi.domain.FurnitureDomain;
+import com.april.furnitureapi.domain.*;
 import com.april.furnitureapi.exception.VendorCodeAlreadyExists;
+import com.april.furnitureapi.exception.VendorCodeNotFoundException;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
 import lombok.AllArgsConstructor;
@@ -44,7 +42,10 @@ public class FurnitureServiceImpl implements FurnitureService {
 
     @Override
     public Furniture findByVendorCode(String vendorCode) {
-        return furnitureRepository.findByVendorCode(vendorCode);
+        return furnitureRepository.findByVendorCode(vendorCode)
+                .orElseThrow(() -> new VendorCodeNotFoundException(
+                        "Furniture with this vendor code %s doesnt exist".formatted(vendorCode)
+                ));
     }
 
     @Override
@@ -55,6 +56,12 @@ public class FurnitureServiceImpl implements FurnitureService {
     @Override
     public List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain, Optional<String> sortBy) {
         return initialSorting(furnitureRepository.findByDomainAndCategory(domain, category, createSortObject(sortBy.orElse("novelty"))));
+    }
+
+    @Override
+    public List<Comment> getComments(String vendorCode) {
+        var furniture = findByVendorCode(vendorCode);
+        return furniture.getComments();
     }
 
     private static List<Furniture> initialSorting(List<Furniture> unsortedList){

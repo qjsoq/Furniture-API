@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "furniture")
@@ -37,11 +39,12 @@ public class Furniture {
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
     FurnitureCategory category;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "domain")
     FurnitureDomain domain;
     @Enumerated(EnumType.STRING)
     @Column(name = "availability")
     Availability availability;
+    @OneToMany(mappedBy = "furniture", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    List<Comment> comments = new ArrayList<>();
 }
