@@ -7,6 +7,8 @@ import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,5 +21,11 @@ public class CommentServiceImpl implements CommentService {
         comment.setAuthor(userService.findByEmail(email));
         comment.setFurniture(furnitureService.findByVendorCode(vendorCode));
         return commentRepository.save(comment);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        commentRepository.deleteById(id);
     }
 }
