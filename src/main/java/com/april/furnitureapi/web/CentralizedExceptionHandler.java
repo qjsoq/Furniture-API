@@ -32,7 +32,7 @@ public class CentralizedExceptionHandler {
         return new ErrorResponse(runtimeException.getLocalizedMessage());
     }
 
-    @ExceptionHandler({UserNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, VendorCodeNotFoundException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException){
         return new ErrorResponse(runtimeException.getMessage());
