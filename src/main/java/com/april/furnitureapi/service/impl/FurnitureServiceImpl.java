@@ -63,6 +63,11 @@ public class FurnitureServiceImpl implements FurnitureService {
         return furniture.getComments();
     }
 
+    @Override
+    public void deleteFurniture(String vendorCode) {
+        furnitureRepository.deleteByVendorCode(vendorCode);
+    }
+
     private static List<Furniture> initialSorting(List<Furniture> unsortedList){
         Map<Boolean, List<Furniture>> availabilityMap = unsortedList.stream()
                 .collect(Collectors.partitioningBy(
