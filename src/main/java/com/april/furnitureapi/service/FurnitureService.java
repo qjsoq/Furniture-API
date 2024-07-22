@@ -14,6 +14,7 @@ public interface FurnitureService {
     List<Furniture> findByCategory(FurnitureCategory category);
     List<Furniture> findByDomainAndCategory(FurnitureCategory category, FurnitureDomain domain, Optional<String> sortBy);
     List<Comment> getComments(String vendorCode);
+    Furniture update(Furniture furniture);
     void deleteFurniture(String vendorCode);
 
 }

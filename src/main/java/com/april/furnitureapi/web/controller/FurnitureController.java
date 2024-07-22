@@ -9,6 +9,7 @@ import com.april.furnitureapi.web.dto.comment.CommentDto;
 import com.april.furnitureapi.web.dto.furniture.FurnitureCreationDto;
 import com.april.furnitureapi.web.dto.furniture.FurnitureDetailedDto;
 import com.april.furnitureapi.web.dto.furniture.FurnitureDto;
+import com.april.furnitureapi.web.dto.furniture.FurnitureUpdateDto;
 import com.april.furnitureapi.web.mapper.CommentMapper;
 import com.april.furnitureapi.web.mapper.FurnitureMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -96,6 +97,15 @@ public class FurnitureController {
                         .toList()
         );
     }
+    @PatchMapping("/update/{vendorCode}")
+    @PreAuthorize("@furnitureChecker.checkId(#vendorCode) and hasRole('ROLE_ADMIN')")
+    public ResponseEntity<FurnitureDetailedDto> updateFurniture(@PathVariable String vendorCode,
+                                                                @RequestBody FurnitureUpdateDto furnitureUpdateDto){
+        var updatedFurniture = furnitureService.update(furnitureMapper.partialUpdate(furnitureUpdateDto,
+                furnitureService.findByVendorCode(vendorCode)));
+        return ResponseEntity.ok(furnitureMapper.furnitureToDetailedDto(updatedFurniture));
+    }
+
     @DeleteMapping("/delete/{vendorCode}")
     @PreAuthorize("@furnitureChecker.checkId(#vendorCode) and hasRole('ROLE_ADMIN')")
     @Transactional

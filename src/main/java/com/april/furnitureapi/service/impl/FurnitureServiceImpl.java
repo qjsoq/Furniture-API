@@ -64,6 +64,11 @@ public class FurnitureServiceImpl implements FurnitureService {
     }
 
     @Override
+    public Furniture update(Furniture furniture) {
+        return furnitureRepository.save(furniture);
+    }
+
+    @Override
     public void deleteFurniture(String vendorCode) {
         furnitureRepository.deleteByVendorCode(vendorCode);
     }
