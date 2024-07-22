@@ -15,5 +15,5 @@ public interface FurnitureRepository extends JpaRepository<Furniture, Long> {
     Optional<Furniture> findByVendorCode(String vendorCode);
     List<Furniture> findByCategory(FurnitureCategory category);
     List<Furniture> findByDomainAndCategory(FurnitureDomain domain, FurnitureCategory category, Sort sort);
-
+    void deleteByVendorCode(String vendorCode);
 }

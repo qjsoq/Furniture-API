@@ -33,7 +33,7 @@ public class Furniture {
     @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;
-    @ManyToOne(targetEntity = User.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "creator_id")
     User creator;
     @Enumerated(EnumType.STRING)
@@ -45,6 +45,6 @@ public class Furniture {
     @Enumerated(EnumType.STRING)
     @Column(name = "availability")
     Availability availability;
-    @OneToMany(mappedBy = "furniture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "furniture", cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Comment> comments = new ArrayList<>();
 }

@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -94,5 +95,12 @@ public class FurnitureController {
                         .map(furnitureMapper::furnitureToFurnitureDto)
                         .toList()
         );
+    }
+    @DeleteMapping("/delete/{vendorCode}")
+    @PreAuthorize("@furnitureChecker.checkId(#vendorCode) and hasRole('ROLE_ADMIN')")
+    @Transactional
+    public ResponseEntity<Void> deleteFurniture(@PathVariable String vendorCode){
+        furnitureService.deleteFurniture(vendorCode);
+        return ResponseEntity.noContent().build();
     }
 }
