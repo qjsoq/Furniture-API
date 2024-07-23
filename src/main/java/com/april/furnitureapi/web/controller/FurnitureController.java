@@ -56,6 +56,7 @@ public class FurnitureController {
         return ResponseEntity.ok(allFurniture);
     }
     @PostMapping("/comments/{vendorCode}")
+    @PreAuthorize("@commentChecker.isUserAllowedToLeaveComment(#vendorCode, #principal.name)")
     public ResponseEntity<CommentDto> addComment(@PathVariable String vendorCode,
                                                  @RequestBody @Valid CommentCreationDto creationDto,
                                                  Principal principal){

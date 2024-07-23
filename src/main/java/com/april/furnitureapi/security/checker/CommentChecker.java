@@ -24,4 +24,7 @@ public class CommentChecker {
         ));
         return comment.getAuthor().getUsername().equals(user.getUsername()) && verified.isEmailVerified(email);
     }
+    public boolean isUserAllowedToLeaveComment(String vendorCode, String email){
+        return commentRepository.isUserAllowedToLeaveComment(email, vendorCode);
+    }
 }
