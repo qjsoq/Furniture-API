@@ -28,4 +28,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "furniture_id")
     Furniture furniture;
+
+    @PrePersist
+    private void updateNumberOfReviews() {
+        this.furniture.setNumberOfReviews(furniture.getComments().size() + 1);
+    }
 }

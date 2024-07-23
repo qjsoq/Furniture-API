@@ -2,6 +2,7 @@ package com.april.furnitureapi.service.impl;
 
 import com.april.furnitureapi.data.CommentRepository;
 import com.april.furnitureapi.domain.Comment;
+import com.april.furnitureapi.domain.Furniture;
 import com.april.furnitureapi.service.CommentService;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
@@ -19,7 +20,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment create(Comment comment, String vendorCode, String email) {
         comment.setAuthor(userService.findByEmail(email));
-        comment.setFurniture(furnitureService.findByVendorCode(vendorCode));
+        var furniture = furnitureService.findByVendorCode(vendorCode);
+        comment.setFurniture(updateReviews(comment.getRating(), furniture));
         return commentRepository.save(comment);
     }
 
@@ -27,5 +29,17 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void delete(Long id) {
         commentRepository.deleteById(id);
+    }
+
+    private Furniture updateReviews(Double rating, Furniture furniture){
+        int numberOfReviews = furniture.getNumberOfReviews();
+        if(numberOfReviews == 0){
+            furniture.setRating(String.valueOf(rating));
+            return furniture;
+        }
+        System.out.println((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating);
+        double newRating = ((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating) / (numberOfReviews + 1);
+        furniture.setRating(String.format("%.1f", newRating));
+        return furniture;
     }
 }
