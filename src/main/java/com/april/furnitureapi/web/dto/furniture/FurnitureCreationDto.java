@@ -22,8 +22,6 @@ public class FurnitureCreationDto {
     @NotBlank(message = "Description must be filled")
     @Size(min = 4, max = 2048, message = "Description of the furniture cannot be less than 4 and more than 2048 characters")
     String description;
-    @Range(min = 0, max = 5)
-    Double rating;
     FurnitureCategory category;
     FurnitureDomain domain;
 }

@@ -30,6 +30,8 @@ public class Furniture {
     String rating;
     @Column(name = "vendor_code")
     String vendorCode;
+    @Column(name = "number_of_reviews")
+    Integer numberOfReviews;
     @CreationTimestamp
     @Column(name = "created_at")
     LocalDateTime createdAt;
