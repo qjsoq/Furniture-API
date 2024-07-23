@@ -31,6 +31,7 @@ public class FurnitureServiceImpl implements FurnitureService {
         }
         furniture.setCreator(userService.findByEmail(email));
         furniture.setAvailability(expectedAvailability);
+        furniture.setNumberOfReviews(0);
         return furnitureRepository.save(furniture);
     }
 
