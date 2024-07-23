@@ -37,7 +37,6 @@ public class CommentServiceImpl implements CommentService {
             furniture.setRating(String.valueOf(rating));
             return furniture;
         }
-        System.out.println((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating);
         double newRating = ((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating) / (numberOfReviews + 1);
         furniture.setRating(String.format("%.1f", newRating));
         return furniture;
