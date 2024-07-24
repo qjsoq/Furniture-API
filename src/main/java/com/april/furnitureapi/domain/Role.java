@@ -1,5 +1,6 @@
 package com.april.furnitureapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,5 +25,6 @@ public class Role {
     String name;
 
     @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
     Set<User> users = new HashSet<>();
 }
