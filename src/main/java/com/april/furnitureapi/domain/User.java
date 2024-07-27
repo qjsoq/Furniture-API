@@ -19,9 +19,6 @@ import java.util.stream.Collectors;
 @Table(name = "USERS")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User implements UserDetails {
     @Id
