@@ -17,31 +17,30 @@ import java.util.Iterator;
 import java.util.Map;
 
 @AllArgsConstructor
-    @Component
-    public class FurnitureMapDeserializer extends JsonDeserializer<Map<Furniture, Integer>> {
-        FurnitureRepository userRepository;
-        @Override
-        public Map<Furniture, Integer> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            ObjectCodec codec = p.getCodec();
-            ObjectNode node = codec.readTree(p);
-            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
-            Map<Furniture, Integer> furnitureMap = new HashMap<>();
+@Component
+public class FurnitureMapDeserializer extends JsonDeserializer<Map<Furniture, Integer>> {
+    FurnitureRepository userRepository;
 
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                Long furnitureId = Long.valueOf(field.getKey());
-                Integer quantity = (Integer) codec.treeToValue(field.getValue(), Integer.class);
+    @Override
+    public Map<Furniture, Integer> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        ObjectCodec codec = p.getCodec();
+        ObjectNode node = codec.readTree(p);
+        Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+        Map<Furniture, Integer> furnitureMap = new HashMap<>();
 
-                // You need a way to retrieve a Furniture object by its ID
-                Furniture furniture = getFurnitureById(furnitureId);  // Implement this method as per your logic
-                furnitureMap.put(furniture, quantity);
-            }
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            Long furnitureId = Long.valueOf(field.getKey());
+            Integer quantity = codec.treeToValue(field.getValue(), Integer.class);
 
-            return furnitureMap;
+            Furniture furniture = getFurnitureById(furnitureId);
+            furnitureMap.put(furniture, quantity);
         }
 
-        private Furniture getFurnitureById(Long id) {
-            // Implement logic to fetch Furniture by ID
-            return userRepository.findById(id).get();  // Replace with actual fetching logic
-        }
+        return furnitureMap;
     }
+
+    private Furniture getFurnitureById(Long id) {
+        return userRepository.findById(id).get();
+    }
+}

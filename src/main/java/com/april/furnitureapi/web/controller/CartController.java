@@ -1,7 +1,9 @@
 package com.april.furnitureapi.web.controller;
 
 import com.april.furnitureapi.domain.Cart;
+import com.april.furnitureapi.exception.CartNotFoundException;
 import com.april.furnitureapi.service.CartService;
+import com.april.furnitureapi.service.CookieService;
 import com.april.furnitureapi.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.security.Principal;
 import java.util.Base64;
 
@@ -23,44 +26,54 @@ import static com.april.furnitureapi.web.WebConstants.API;
 @RequestMapping(path = API + "/cart", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CartController {
     private final CartService cartService;
-    private final UserService userService;
-    private final ObjectMapper objectMapper;
+    private final CookieService cookieService;
 
-    @PostMapping("/add/{vendorCode}")
+    @PostMapping("/checkout")
+    public ResponseEntity<Cart> saveCart(Principal principal, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+        Cart newCart;
+        var cookie = cookieService.extractCookie(principal.getName(), request);
+        if (cookie.isPresent()) {
+            String encodedCart = cookie.get().getValue();
+            newCart = cartService.decodeCartCookie(encodedCart);
+            newCart = cartService.checkout(newCart);
+        } else {
+            throw new CartNotFoundException("You have not add anything to the cart");
+        }
+        response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1));
+        return ResponseEntity.created(URI.create("")).body(newCart);
+    }
+
+    @PutMapping("/add/{vendorCode}")
     public ResponseEntity<Cart> addToCart(@PathVariable String vendorCode, Principal principal,
                                           HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
-        Cart newCart = null;
-        String cookieName = "cart_" + principal.getName().replaceAll("@", "_");
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookieName.equals(cookie.getName())) {
-                    String encodedCart = cookie.getValue();
-                    newCart = decodeCartCookie(encodedCart);
-                    newCart = cartService.addToCart(newCart, vendorCode);
-                    break;
-                }
-            }
-        }
-        if (newCart == null) {
+        Cart newCart;
+        var cookie = cookieService.extractCookie(principal.getName(), request);
+        if (cookie.isPresent()) {
+            String encodedCart = cookie.get().getValue();
+            newCart = cartService.decodeCartCookie(encodedCart);
+            newCart = cartService.addToCart(newCart, vendorCode);
+        } else {
             newCart = cartService.addAndCreateCart(vendorCode, principal.getName());
         }
-        String cartJson = objectMapper.writeValueAsString(newCart);
-        String encodedUpdatedCart = Base64.getUrlEncoder().encodeToString(cartJson.getBytes());
-
-        Cookie newCartCookie = new Cookie(cookieName, encodedUpdatedCart);
-        newCartCookie.setHttpOnly(true);
-        newCartCookie.setPath("/");
-        newCartCookie.setMaxAge(1000);
-        response.addCookie(newCartCookie);
-
+        response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1000));
         return ResponseEntity.ok(newCart);
     }
 
-    private Cart decodeCartCookie(String encodedCart) throws JsonProcessingException {
-        byte[] decodedBytes = Base64.getUrlDecoder().decode(encodedCart);
-        String cartJson = new String(decodedBytes);
-        System.out.println(cartJson);
-        return objectMapper.readValue(cartJson, Cart.class);
+    @DeleteMapping("/delete/{vendorCode}")
+    public ResponseEntity<Cart> deleteFromCart(@PathVariable String vendorCode, Principal principal,
+                                               HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
+        Cart newCart;
+        var cookie = cookieService.extractCookie(principal.getName(), request);
+        if (cookie.isPresent()) {
+            String encodedCart = cookie.get().getValue();
+            newCart = cartService.decodeCartCookie(encodedCart);
+            newCart = cartService.deleteFromCart(newCart, vendorCode);
+        } else {
+            throw new CartNotFoundException("You have not add anything to the cart");
+        }
+        response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1000));
+        return ResponseEntity.noContent().build();
     }
+
+
 }
