@@ -1,13 +1,12 @@
 package com.april.furnitureapi.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,13 +42,14 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(
             name = "role_id", referencedColumnName = "id"))
     Set<Role> roles = new HashSet<>();
-
     @Override
+    @JsonDeserialize(contentUsing = Role.GrantedAuthorityDeserializer.class)
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
     }
+
     @Override
     public String getUsername() {
         return email;

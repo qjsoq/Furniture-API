@@ -18,34 +18,37 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CentralizedExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<Map<String, List<String>>> argumentNotValid(MethodArgumentNotValidException exception){
+    public ResponseEntity<Map<String, List<String>>> argumentNotValid(MethodArgumentNotValidException exception) {
         Map<String, List<String>> errors = exception.getFieldErrors()
                 .stream()
                 .collect(Collectors.groupingBy(FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())));
         return ResponseEntity.badRequest().body(errors);
     }
+
     @ExceptionHandler({InvalidPasswordException.class, UserAlreadyExistsException.class, InvalidTokenException.class,
-            VendorCodeAlreadyExists.class, InvalidCategoryValueException.class})
+            VendorCodeAlreadyExists.class, InvalidCategoryValueException.class, InvalidDomainValueException.class,
+            InvalidAvailabilityStatus.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException){
+    public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getLocalizedMessage());
     }
 
-    @ExceptionHandler({UserNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, FurnitureNotFoundException.class, CommentNotFoundException.class,
+            CartNotFoundException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException){
+    public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getMessage());
     }
 
     @ExceptionHandler({JWTVerificationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse JwtVerificationExceptionHandler(RuntimeException runtimeException){
+    public ErrorResponse JwtVerificationExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getMessage() + " provided token not valid(");
     }
 
     @ExceptionHandler({UserIsNotVerifiedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse userVerificationHandler(RuntimeException runtimeException){
+    public ErrorResponse userVerificationHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getMessage());
     }
 }
