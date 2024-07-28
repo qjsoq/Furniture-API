@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(API + AUTH + "/**").permitAll() // Ensure this is allowing everything under /api/v1/auth/
                         .requestMatchers(HttpMethod.GET,API  + "/furniture/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,API  + "/warehouse/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
