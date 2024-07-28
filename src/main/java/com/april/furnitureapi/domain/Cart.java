@@ -27,6 +27,9 @@ public class Cart {
     @Column(name = "price")
     @JsonProperty("price")
     Long price;
+    @Column(name = "cart_code")
+    @JsonProperty("cartCode")
+    String cartCode;
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "creator_id")
     @JsonProperty("creator")

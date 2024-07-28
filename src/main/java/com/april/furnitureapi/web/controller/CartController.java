@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -72,6 +74,14 @@ public class CartController {
             throw new CartNotFoundException("You have not add anything to the cart");
         }
         response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1000));
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{cartCode}")
+    @Transactional
+    @PreAuthorize("@cartChecker.isUserTheAuthor(#cartCode, #principal.name)")
+    public ResponseEntity<Void> deleteCart(@PathVariable String cartCode, Principal principal){
+        cartService.deleteCart(cartCode);
         return ResponseEntity.noContent().build();
     }
 
