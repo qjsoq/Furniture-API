@@ -9,4 +9,5 @@ public interface CartService {
     Cart deleteFromCart(Cart cart, String vendorCode);
     Cart decodeCartCookie(String encodedCart) throws JsonProcessingException;
     Cart checkout(Cart cart);
+    void deleteCart(String cartCode);
 }

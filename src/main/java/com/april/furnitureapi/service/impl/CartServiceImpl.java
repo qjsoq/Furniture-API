@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,8 @@ public class CartServiceImpl implements CartService {
         var furniture = furnitureRepository.findByVendorCode(vendorCode).orElseThrow(() -> new FurnitureNotFoundException(
                 "Furniture with provided vendor code %s does not exist".formatted(vendorCode)
         ));
-        return Cart.builder().creator(user).items(Map.of(furniture, 1)).price(furniture.getPrice()).build();
+        return Cart.builder().creator(user).items(Map.of(furniture, 1)).price(furniture.getPrice())
+                .cartCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000)).build();
     }
 
     @Override
@@ -70,5 +72,10 @@ public class CartServiceImpl implements CartService {
     @PreAuthorize("@cartChecker.checkIfTheCartIsEmpty(#cart)")
     public Cart checkout(Cart cart) {
         return cartRepository.save(cart);
+    }
+
+    @Override
+    public void deleteCart(String cartCode) {
+        cartRepository.deleteByCartCode(cartCode);
     }
 }
