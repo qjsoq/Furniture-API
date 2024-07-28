@@ -1,9 +1,10 @@
 package com.april.furnitureapi.service;
 
+import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.domain.User;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import jakarta.mail.MessagingException;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -12,4 +13,5 @@ public interface UserService {
     User findByEmail(String email);
     User updateUser(User user);
     boolean verifyToken(String token);
+    List<Cart> getMyOrders(String email);
 }
