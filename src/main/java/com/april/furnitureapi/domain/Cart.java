@@ -9,8 +9,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 @Entity
 @Table(name = "cart")
@@ -30,6 +32,10 @@ public class Cart {
     @Column(name = "cart_code")
     @JsonProperty("cartCode")
     String cartCode;
+    @CreationTimestamp
+    @Column(name = "created_at")
+    @JsonProperty("created_at")
+    LocalDateTime createdAt;
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "creator_id")
     @JsonProperty("creator")
