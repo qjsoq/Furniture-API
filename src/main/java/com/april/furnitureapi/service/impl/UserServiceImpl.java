@@ -1,10 +1,11 @@
 package com.april.furnitureapi.service.impl;
 
+import com.april.furnitureapi.data.CartRepository;
 import com.april.furnitureapi.data.ConfirmationRepository;
 import com.april.furnitureapi.data.RoleRepository;
 import com.april.furnitureapi.data.UserRepository;
+import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.domain.Confirmation;
-import com.april.furnitureapi.domain.Role;
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.exception.InvalidPasswordException;
 import com.april.furnitureapi.exception.InvalidTokenException;
@@ -14,16 +15,13 @@ import com.april.furnitureapi.security.JwtTokenProvider;
 import com.april.furnitureapi.service.EmailService;
 import com.april.furnitureapi.service.UserService;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -35,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final ConfirmationRepository confirmationRepository;
     private final PasswordEncoder encoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CartRepository cartRepository;
     @Override
     @Transactional
     public User signUp(User user){
@@ -78,6 +77,14 @@ public class UserServiceImpl implements UserService {
         user.setVerified(true);
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public List<Cart> getMyOrders(String email) {
+        var user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(
+                "User with provided email %s does not exist".formatted(email)
+        ));
+        return cartRepository.findByCreatorId(user.getId());
     }
 
     public void checkIfUserExists(User user){
