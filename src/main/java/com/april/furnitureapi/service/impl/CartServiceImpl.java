@@ -10,6 +10,7 @@ import com.april.furnitureapi.service.CartService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
@@ -66,6 +67,7 @@ public class CartServiceImpl implements CartService {
         return objectMapper.readValue(cartJson, Cart.class);    }
 
     @Override
+    @PreAuthorize("@cartChecker.checkIfTheCartIsEmpty(#cart)")
     public Cart checkout(Cart cart) {
         return cartRepository.save(cart);
     }
