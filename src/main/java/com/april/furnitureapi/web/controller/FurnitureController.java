@@ -12,7 +12,6 @@ import com.april.furnitureapi.web.dto.furniture.FurnitureDto;
 import com.april.furnitureapi.web.dto.furniture.FurnitureUpdateDto;
 import com.april.furnitureapi.web.mapper.CommentMapper;
 import com.april.furnitureapi.web.mapper.FurnitureMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -36,14 +35,13 @@ public class FurnitureController {
     FurnitureService furnitureService;
     CommentService commentService;
     CommentMapper commentMapper;
-
     @PostMapping(value = {"", "/{availability}"})
     @PreAuthorize("@isUserVerified.isEmailVerified(authentication.name) and hasRole('ROLE_ADMIN')")
     public ResponseEntity<FurnitureDto> saveFurniture(@PathVariable(required = false) String availability,
                                                       @RequestBody @Valid FurnitureCreationDto creationDto,
                                                       Principal principal) {
         var furniture = furnitureService.saveFurniture(furnitureMapper.funitureCreationToFurniture(creationDto),
-                principal.getName(), Optional.ofNullable(availability));
+                principal.getName(), creationDto.getAmount(), creationDto.getWarehouseId());
         return ResponseEntity.created(URI.create("")).
                 body(furnitureMapper.furnitureToFurnitureDto(furniture));
     }
@@ -99,7 +97,7 @@ public class FurnitureController {
         );
     }
     @PatchMapping("/update/{vendorCode}")
-    @PreAuthorize("@furnitureChecker.checkId(#vendorCode) and hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<FurnitureDetailedDto> updateFurniture(@PathVariable String vendorCode,
                                                                 @RequestBody FurnitureUpdateDto furnitureUpdateDto){
         var updatedFurniture = furnitureService.update(furnitureMapper.partialUpdate(furnitureUpdateDto,

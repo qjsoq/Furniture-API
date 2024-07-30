@@ -8,7 +8,7 @@ import com.april.furnitureapi.domain.FurnitureDomain;
 import java.util.*;
 
 public interface FurnitureService {
-    Furniture saveFurniture(Furniture furniture, String email, Optional<String> availability);
+    Furniture saveFurniture(Furniture furniture, String email, Integer amount, Long warehouseId);
     List<Furniture> findAll();
     Furniture findByVendorCode(String vendorCode);
     List<Furniture> findByCategory(FurnitureCategory category);

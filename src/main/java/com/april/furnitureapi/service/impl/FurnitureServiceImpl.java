@@ -1,9 +1,11 @@
 package com.april.furnitureapi.service.impl;
 
 import com.april.furnitureapi.data.FurnitureRepository;
+import com.april.furnitureapi.data.WarehouseRepository;
 import com.april.furnitureapi.domain.*;
 import com.april.furnitureapi.exception.VendorCodeAlreadyExists;
 import com.april.furnitureapi.exception.FurnitureNotFoundException;
+import com.april.furnitureapi.exception.WarehouseNotFoundException;
 import com.april.furnitureapi.service.FurnitureService;
 import com.april.furnitureapi.service.UserService;
 import lombok.AllArgsConstructor;
@@ -19,12 +21,10 @@ import java.util.stream.Collectors;
 public class FurnitureServiceImpl implements FurnitureService {
     private FurnitureRepository furnitureRepository;
     private UserService userService;
+    private WarehouseRepository warehouseRepository;
     @Override
-    public Furniture saveFurniture(Furniture furniture, String email, Optional<String> availability) {
-        var expectedAvailability = availability
-                .flatMap(
-                        (avail) -> Optional.of(Availability.convert(avail)))
-                .orElse(Availability.INSTOCK);
+    public Furniture saveFurniture(Furniture furniture, String email, Integer amount, Long warehouseId) {
+        var expectedAvailability = (amount == 0 ? Availability.ONCOMING : Availability.INSTOCK);
         furniture.setVendorCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000));
         if(furnitureRepository.existsByVendorCode(furniture.getVendorCode())){
             throw new VendorCodeAlreadyExists("The random vendor code %s has already been used, try to save the furniture one more time.".formatted(furniture.getVendorCode()));
@@ -32,6 +32,10 @@ public class FurnitureServiceImpl implements FurnitureService {
         furniture.setCreator(userService.findByEmail(email));
         furniture.setAvailability(expectedAvailability);
         furniture.setNumberOfReviews(0);
+        var warehouse = warehouseRepository.findById(warehouseId).orElseThrow(() -> new WarehouseNotFoundException(
+                "Warehouse was not found"
+        ));
+        warehouse.getStorage().put(furniture, amount);
         return furnitureRepository.save(furniture);
     }
 
