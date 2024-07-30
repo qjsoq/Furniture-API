@@ -43,7 +43,7 @@ public class FurnitureController {
                                                       @RequestBody @Valid FurnitureCreationDto creationDto,
                                                       Principal principal) {
         var furniture = furnitureService.saveFurniture(furnitureMapper.funitureCreationToFurniture(creationDto),
-                principal.getName(), Optional.ofNullable(availability));
+                principal.getName(), creationDto.getAmount(), creationDto.getWarehouseId());
         return ResponseEntity.created(URI.create("")).
                 body(furnitureMapper.furnitureToFurnitureDto(furniture));
     }
@@ -98,7 +98,7 @@ public class FurnitureController {
         );
     }
     @PatchMapping("/update/{vendorCode}")
-    @PreAuthorize("@furnitureChecker.checkId(#vendorCode) and hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<FurnitureDetailedDto> updateFurniture(@PathVariable String vendorCode,
                                                                 @RequestBody FurnitureUpdateDto furnitureUpdateDto){
         var updatedFurniture = furnitureService.update(furnitureMapper.partialUpdate(furnitureUpdateDto,

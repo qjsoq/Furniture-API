@@ -4,6 +4,7 @@ import com.april.furnitureapi.domain.FurnitureCategory;
 import com.april.furnitureapi.domain.FurnitureDomain;
 import com.april.furnitureapi.utils.PriceConstraint;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -24,4 +25,7 @@ public class FurnitureCreationDto {
     String description;
     FurnitureCategory category;
     FurnitureDomain domain;
+    @PositiveOrZero
+    Integer amount;
+    Long warehouseId;
 }
