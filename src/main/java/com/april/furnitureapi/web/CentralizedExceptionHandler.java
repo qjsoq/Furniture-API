@@ -34,7 +34,7 @@ public class CentralizedExceptionHandler {
     }
 
     @ExceptionHandler({UserNotFoundException.class, FurnitureNotFoundException.class, CommentNotFoundException.class,
-            CartNotFoundException.class})
+            CartNotFoundException.class, WarehouseNotFoundException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getMessage());
