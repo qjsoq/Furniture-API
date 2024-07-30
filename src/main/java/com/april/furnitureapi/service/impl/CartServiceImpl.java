@@ -3,7 +3,11 @@ package com.april.furnitureapi.service.impl;
 import com.april.furnitureapi.data.CartRepository;
 import com.april.furnitureapi.data.FurnitureRepository;
 import com.april.furnitureapi.data.UserRepository;
+import com.april.furnitureapi.data.WarehouseRepository;
+import com.april.furnitureapi.domain.Availability;
 import com.april.furnitureapi.domain.Cart;
+import com.april.furnitureapi.domain.Furniture;
+import com.april.furnitureapi.domain.Warehouse;
 import com.april.furnitureapi.exception.FurnitureNotFoundException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.service.CartService;
@@ -23,6 +27,7 @@ import java.util.Random;
 public class CartServiceImpl implements CartService {
     private final UserRepository userRepository;
     private final FurnitureRepository furnitureRepository;
+    private final WarehouseRepository warehouseRepository;
     private final ObjectMapper objectMapper;
     private final CartRepository cartRepository;
 
@@ -34,9 +39,11 @@ public class CartServiceImpl implements CartService {
         var furniture = furnitureRepository.findByVendorCode(vendorCode).orElseThrow(() -> new FurnitureNotFoundException(
                 "Furniture with provided vendor code %s does not exist".formatted(vendorCode)
         ));
+        updateFurnitureAvailability(furniture);
         return Cart.builder().creator(user).items(Map.of(furniture, 1)).price(furniture.getPrice())
                 .cartCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000)).build();
     }
+
 
     @Override
     public Cart addToCart(Cart cart, String vendorCode) {
@@ -46,6 +53,7 @@ public class CartServiceImpl implements CartService {
         if (cart.getItems() == null) {
             cart.setItems(new HashMap<>());
         }
+        updateFurnitureAvailability(furniture);
         cart.getItems().merge(furniture, 1, Integer::sum);
         cart.setPrice(cart.getPrice() + furniture.getPrice());
         return cart;
@@ -56,7 +64,7 @@ public class CartServiceImpl implements CartService {
         var furniture = furnitureRepository.findByVendorCode(vendorCode).orElseThrow(() -> new FurnitureNotFoundException(
                 "Furniture with provided vendor code %s does not exist".formatted(vendorCode)
         ));
-        cart.setPrice(cart.getItems().containsKey(furniture)? cart.getPrice() - furniture.getPrice() : cart.getPrice());
+        cart.setPrice(cart.getItems().containsKey(furniture) ? cart.getPrice() - furniture.getPrice() : cart.getPrice());
         cart.getItems().computeIfPresent(furniture, (key, value) -> value == 1 ? null : value - 1);
         return cart;
     }
@@ -66,7 +74,8 @@ public class CartServiceImpl implements CartService {
         byte[] decodedBytes = Base64.getUrlDecoder().decode(encodedCart);
         String cartJson = new String(decodedBytes);
         System.out.println(cartJson);
-        return objectMapper.readValue(cartJson, Cart.class);    }
+        return objectMapper.readValue(cartJson, Cart.class);
+    }
 
     @Override
     @PreAuthorize("@cartChecker.checkIfTheCartIsEmpty(#cart)")
@@ -77,5 +86,19 @@ public class CartServiceImpl implements CartService {
     @Override
     public void deleteCart(String cartCode) {
         cartRepository.deleteByCartCode(cartCode);
+    }
+
+    private void updateFurnitureAvailability(Furniture furniture) {
+        var warehouse = warehouseRepository.findAll().stream()
+                .filter((temp -> temp.getStorage().containsKey(furniture) && furniture.getAvailability() == Availability.INSTOCK))
+                .findAny()
+                .orElseThrow(() -> new FurnitureNotFoundException(
+                        "Furniture is out of stock"
+                ));
+        warehouse.getStorage().computeIfPresent(furniture, (key, value) -> value > 1 ? value - 1 : 0);
+        if (warehouse.getStorage().get(furniture) == 0) {
+            furniture.setAvailability(Availability.OUTSTOCK);
+            furnitureRepository.save(furniture);        }
+        warehouseRepository.save(warehouse);
     }
 }

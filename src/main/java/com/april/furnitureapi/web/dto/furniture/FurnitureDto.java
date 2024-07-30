@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FurnitureDto {
     String title;
+    String vendorCode;
     Long price;
     Availability availability;
 }
