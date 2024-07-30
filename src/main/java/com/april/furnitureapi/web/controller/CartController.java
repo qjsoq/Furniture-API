@@ -44,6 +44,7 @@ public class CartController {
         } else {
             throw new CartNotFoundException("You have not add anything to the cart");
         }
+
         response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1));
         return ResponseEntity.created(URI.create("")).body(cartMapper.toDetailedDto(newCart));
     }
