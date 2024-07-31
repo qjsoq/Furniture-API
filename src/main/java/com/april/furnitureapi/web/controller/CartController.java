@@ -4,12 +4,9 @@ import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.exception.CartNotFoundException;
 import com.april.furnitureapi.service.CartService;
 import com.april.furnitureapi.service.CookieService;
-import com.april.furnitureapi.service.UserService;
 import com.april.furnitureapi.web.dto.cart.CartDetailedDto;
 import com.april.furnitureapi.web.mapper.CartMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.Base64;
+import java.util.HashMap;
 
 import static com.april.furnitureapi.web.WebConstants.API;
 
@@ -44,12 +41,14 @@ public class CartController {
         } else {
             throw new CartNotFoundException("You have not add anything to the cart");
         }
-
+        newCart.setPrice(0L);
+        newCart.setItems(new HashMap<>());
         response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1));
         return ResponseEntity.created(URI.create("")).body(cartMapper.toDetailedDto(newCart));
     }
 
     @PutMapping("/add/{vendorCode}")
+    @PreAuthorize("@furnitureChecker.checkAvailability(#vendorCode)")
     public ResponseEntity<CartDetailedDto> addToCart(@PathVariable String vendorCode, Principal principal,
                                           HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
         Cart newCart;
@@ -88,6 +87,4 @@ public class CartController {
         cartService.deleteCart(cartCode);
         return ResponseEntity.noContent().build();
     }
-
-
 }
