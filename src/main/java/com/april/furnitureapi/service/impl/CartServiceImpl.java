@@ -7,20 +7,17 @@ import com.april.furnitureapi.data.WarehouseRepository;
 import com.april.furnitureapi.domain.Availability;
 import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.domain.Furniture;
-import com.april.furnitureapi.domain.Warehouse;
 import com.april.furnitureapi.exception.FurnitureNotFoundException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.service.CartService;
+import com.april.furnitureapi.service.WarehouseService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +25,7 @@ public class CartServiceImpl implements CartService {
     private final UserRepository userRepository;
     private final FurnitureRepository furnitureRepository;
     private final WarehouseRepository warehouseRepository;
+    private final WarehouseService warehouseService;
     private final ObjectMapper objectMapper;
     private final CartRepository cartRepository;
 
@@ -39,7 +37,6 @@ public class CartServiceImpl implements CartService {
         var furniture = furnitureRepository.findByVendorCode(vendorCode).orElseThrow(() -> new FurnitureNotFoundException(
                 "Furniture with provided vendor code %s does not exist".formatted(vendorCode)
         ));
-        updateFurnitureAvailability(furniture);
         return Cart.builder().creator(user).items(Map.of(furniture, 1)).price(furniture.getPrice())
                 .cartCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000)).build();
     }
@@ -53,7 +50,9 @@ public class CartServiceImpl implements CartService {
         if (cart.getItems() == null) {
             cart.setItems(new HashMap<>());
         }
-        updateFurnitureAvailability(furniture);
+        warehouseService.getWarehouseWithFurniture(furniture, (cart.getItems().get(furniture) != null ? cart.getItems().get(furniture) + 1 : 1)).orElseThrow(() -> new FurnitureNotFoundException(
+                "We dont have the required amount of furniture items %s in our warehouses".formatted(furniture.getVendorCode())
+        ));
         cart.getItems().merge(furniture, 1, Integer::sum);
         cart.setPrice(cart.getPrice() + furniture.getPrice());
         return cart;
@@ -80,6 +79,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @PreAuthorize("@cartChecker.checkIfTheCartIsEmpty(#cart)")
     public Cart checkout(Cart cart) {
+        cart.getItems().entrySet()
+                .forEach(this::updateFurnitureAvailability);
         return cartRepository.save(cart);
     }
 
@@ -88,17 +89,16 @@ public class CartServiceImpl implements CartService {
         cartRepository.deleteByCartCode(cartCode);
     }
 
-    private void updateFurnitureAvailability(Furniture furniture) {
-        var warehouse = warehouseRepository.findAll().stream()
-                .filter((temp -> temp.getStorage().containsKey(furniture) && furniture.getAvailability() == Availability.INSTOCK))
-                .findAny()
-                .orElseThrow(() -> new FurnitureNotFoundException(
-                        "Furniture is out of stock"
-                ));
-        warehouse.getStorage().computeIfPresent(furniture, (key, value) -> value > 1 ? value - 1 : 0);
+    private void updateFurnitureAvailability(Map.Entry<Furniture, Integer> temp) {
+        var furniture = temp.getKey();
+        var warehouse = warehouseService.getWarehouseWithFurniture(temp.getKey(), temp.getValue()).orElseThrow(() -> new FurnitureNotFoundException(
+                "This item %s has already been sold".formatted(furniture.getVendorCode())
+        ));
+        warehouse.getStorage().computeIfPresent(furniture, (key, value) -> value - temp.getValue());
         if (warehouse.getStorage().get(furniture) == 0) {
             furniture.setAvailability(Availability.OUTSTOCK);
-            furnitureRepository.save(furniture);        }
+            furnitureRepository.save(furniture);
+        }
         warehouseRepository.save(warehouse);
     }
 }
