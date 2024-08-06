@@ -1,20 +1,17 @@
 package com.april.furnitureapi.service.impl;
 
+import static com.april.furnitureapi.utils.EmailUtils.getVerificationURL;
+
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.service.EmailService;
-import jakarta.mail.MessagingException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Map;
-
-import static com.april.furnitureapi.utils.EmailUtils.getVerificationURL;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +25,10 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendVerificationEmail(User user, String token) {
-        try{
+        try {
             var context = new Context();
-            context.setVariables(Map.of("name", user.getName(), "url", getVerificationURL(verifyHost, token)));
+            context.setVariables(
+                    Map.of("name", user.getName(), "url", getVerificationURL(verifyHost, token)));
             String text = templateEngine.process(EMAIL_TEMPLATE, context);
             var message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8);
@@ -39,7 +37,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(user.getEmail());
             helper.setText(text, true);
             mailSender.send(message);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new RuntimeException(exception.getMessage());
         }
 

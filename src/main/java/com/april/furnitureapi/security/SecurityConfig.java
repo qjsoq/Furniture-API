@@ -1,6 +1,8 @@
 package com.april.furnitureapi.security;
 
-import com.april.furnitureapi.data.RoleRepository;
+import static com.april.furnitureapi.web.WebConstants.API;
+import static com.april.furnitureapi.web.WebConstants.AUTH;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.april.furnitureapi.web.WebConstants.*;
-
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity
@@ -28,11 +28,13 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(API + AUTH + "/**").permitAll() // Ensure this is allowing everything under /api/v1/auth/
-                        .requestMatchers(HttpMethod.GET,API  + "/furniture/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,API  + "/warehouse/**").permitAll()
+                        .requestMatchers(API + AUTH + "/**")
+                        .permitAll() // Ensure this is allowing everything under /api/v1/auth/
+                        .requestMatchers(HttpMethod.GET, API + "/furniture/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, API + "/warehouse/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

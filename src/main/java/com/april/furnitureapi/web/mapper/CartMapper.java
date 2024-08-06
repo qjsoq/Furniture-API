@@ -9,5 +9,6 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CartMapper {
     CartDto toDto(Cart cart);
+
     CartDetailedDto toDetailedDto(Cart cart);
 }

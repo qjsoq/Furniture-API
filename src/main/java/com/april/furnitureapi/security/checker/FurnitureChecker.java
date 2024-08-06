@@ -10,16 +10,21 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FurnitureChecker {
     private final FurnitureRepository furnitureRepository;
-    public boolean checkId(String vendorCode){
-        if(!furnitureRepository.existsByVendorCode(vendorCode)) throw new FurnitureNotFoundException(
-                "Furniture with provided vendor code %s does not exist".formatted(vendorCode)
-        );
+
+    public boolean checkId(String vendorCode) {
+        if (!furnitureRepository.existsByVendorCode(vendorCode)) {
+            throw new FurnitureNotFoundException(
+                    "Furniture with provided vendor code %s does not exist".formatted(vendorCode)
+            );
+        }
         return true;
     }
-    public boolean checkAvailability(String vendorCode){
-        var furniture = furnitureRepository.findByVendorCode(vendorCode).orElseThrow(() -> new FurnitureNotFoundException(
-                "Not found"
-        ));
+
+    public boolean checkAvailability(String vendorCode) {
+        var furniture = furnitureRepository.findByVendorCode(vendorCode)
+                .orElseThrow(() -> new FurnitureNotFoundException(
+                        "Not found"
+                ));
         return furniture.getAvailability() == Availability.INSTOCK;
     }
 }

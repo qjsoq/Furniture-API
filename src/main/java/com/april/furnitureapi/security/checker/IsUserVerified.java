@@ -10,11 +10,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class IsUserVerified {
     private final UserRepository userRepository;
-    public boolean isEmailVerified(String email){
+
+    public boolean isEmailVerified(String email) {
         var user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException("User with this email %s was not found".formatted(email))
+                () -> new UserNotFoundException(
+                        "User with this email %s was not found".formatted(email))
         );
-        if(!user.isVerified()) throw new UserIsNotVerifiedException("Please verify your account");
+        if (!user.isVerified()) {
+            throw new UserIsNotVerifiedException("Please verify your account");
+        }
         return true;
     }
 }

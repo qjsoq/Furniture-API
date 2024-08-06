@@ -1,10 +1,9 @@
 package com.april.furnitureapi.web.dto.cart;
 
 import com.april.furnitureapi.web.dto.furniture.FurnitureDto;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class CartDetailedDto {

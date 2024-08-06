@@ -10,5 +10,6 @@ import org.mapstruct.ReportingPolicy;
 
 public interface CommentMapper {
     Comment creationDtoToComment(CommentCreationDto creationDto);
+
     CommentDto commentToDto(Comment comment);
 }

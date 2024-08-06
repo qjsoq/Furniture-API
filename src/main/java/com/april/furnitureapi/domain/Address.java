@@ -1,9 +1,7 @@
 package com.april.furnitureapi.domain;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-
 public enum Address {
-    FONTENOY_STR("Dublin warehouse","Fontenoy st", 3, 53.35544810905507, -6.269277760670421);
+    FONTENOY_STR("Dublin warehouse", "Fontenoy st", 3, 53.35544810905507, -6.269277760670421);
 
     private final String displayName;
     private final String street;
@@ -30,10 +28,12 @@ public enum Address {
     public double getLongitude() {
         return longitude;
     }
-    public String getStreet(){
+
+    public String getStreet() {
         return street;
     }
-    public Integer getHouseNo(){
+
+    public Integer getHouseNo() {
         return houseNo;
     }
 }

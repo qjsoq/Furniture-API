@@ -1,5 +1,7 @@
 package com.april.furnitureapi.web.controller;
 
+import static com.april.furnitureapi.web.WebConstants.API;
+
 import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.exception.CartNotFoundException;
 import com.april.furnitureapi.service.CartService;
@@ -9,18 +11,20 @@ import com.april.furnitureapi.web.mapper.CartMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.security.Principal;
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.security.Principal;
-import java.util.HashMap;
-
-import static com.april.furnitureapi.web.WebConstants.API;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +35,9 @@ public class CartController {
     private final CartMapper cartMapper;
 
     @PostMapping("/checkout")
-    public ResponseEntity<CartDetailedDto> saveCart(Principal principal, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<CartDetailedDto> saveCart(Principal principal, HttpServletRequest request,
+                                                    HttpServletResponse response)
+            throws JsonProcessingException {
         Cart newCart;
         var cookie = cookieService.extractCookie(principal.getName(), request);
         if (cookie.isPresent()) {
@@ -49,8 +55,11 @@ public class CartController {
 
     @PutMapping("/add/{vendorCode}")
     @PreAuthorize("@furnitureChecker.checkAvailability(#vendorCode)")
-    public ResponseEntity<CartDetailedDto> addToCart(@PathVariable String vendorCode, Principal principal,
-                                          HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<CartDetailedDto> addToCart(@PathVariable String vendorCode,
+                                                     Principal principal,
+                                                     HttpServletResponse response,
+                                                     HttpServletRequest request)
+            throws JsonProcessingException {
         Cart newCart;
         var cookie = cookieService.extractCookie(principal.getName(), request);
         if (cookie.isPresent()) {
@@ -66,7 +75,9 @@ public class CartController {
 
     @DeleteMapping("/delete/{vendorCode}")
     public ResponseEntity<Cart> deleteFromCart(@PathVariable String vendorCode, Principal principal,
-                                               HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
+                                               HttpServletResponse response,
+                                               HttpServletRequest request)
+            throws JsonProcessingException {
         Cart newCart;
         var cookie = cookieService.extractCookie(principal.getName(), request);
         if (cookie.isPresent()) {
@@ -83,7 +94,7 @@ public class CartController {
     @DeleteMapping("/{cartCode}")
     @Transactional
     @PreAuthorize("@cartChecker.isUserTheAuthor(#cartCode, #principal.name)")
-    public ResponseEntity<Void> deleteCart(@PathVariable String cartCode, Principal principal){
+    public ResponseEntity<Void> deleteCart(@PathVariable String cartCode, Principal principal) {
         cartService.deleteCart(cartCode);
         return ResponseEntity.noContent().build();
     }
