@@ -12,16 +12,20 @@ import org.springframework.stereotype.Component;
 public class CartChecker {
     private final CartRepository cartRepository;
 
-    public boolean checkIfTheCartIsEmpty(Cart cart){
-        if(cart.getItems().isEmpty()) throw new CartNotFoundException(
-                "Your cart is empty"
-        );
+    public boolean checkIfTheCartIsEmpty(Cart cart) {
+        if (cart.getItems().isEmpty()) {
+            throw new CartNotFoundException(
+                    "Your cart is empty"
+            );
+        }
         return true;
     }
-    public boolean isUserTheAuthor(String cartCode, String email){
-        var cart = cartRepository.findByCartCode(cartCode).orElseThrow(() -> new CommentNotFoundException(
-                "Cart not found"
-        ));
+
+    public boolean isUserTheAuthor(String cartCode, String email) {
+        var cart = cartRepository.findByCartCode(cartCode)
+                .orElseThrow(() -> new CommentNotFoundException(
+                        "Cart not found"
+                ));
         return cart.getCreator().getEmail().equals(email);
     }
 }

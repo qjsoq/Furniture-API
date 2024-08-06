@@ -1,11 +1,9 @@
 package com.april.furnitureapi.web.dto.user;
 
 import com.april.furnitureapi.domain.Role;
-import lombok.Data;
-
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
+import lombok.Data;
 
 @Data
 public class UserDto {

@@ -17,6 +17,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserService userService;
     private final FurnitureService furnitureService;
     private final CommentRepository commentRepository;
+
     @Override
     public Comment create(Comment comment, String vendorCode, String email) {
         comment.setAuthor(userService.findByEmail(email));
@@ -31,13 +32,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(id);
     }
 
-    private Furniture updateReviews(Double rating, Furniture furniture){
+    private Furniture updateReviews(Double rating, Furniture furniture) {
         int numberOfReviews = furniture.getNumberOfReviews();
-        if(numberOfReviews == 0){
+        if (numberOfReviews == 0) {
             furniture.setRating(String.valueOf(rating));
             return furniture;
         }
-        double newRating = ((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating) / (numberOfReviews + 1);
+        double newRating =
+                ((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating) /
+                        (numberOfReviews + 1);
         furniture.setRating(String.format("%.1f", newRating));
         return furniture;
     }

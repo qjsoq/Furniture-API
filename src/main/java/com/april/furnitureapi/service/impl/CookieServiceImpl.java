@@ -6,15 +6,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Base64;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
-import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CookieServiceImpl implements CookieService {
     private final ObjectMapper objectMapper;
+
     @Override
     public Optional<Cookie> extractCookie(String email, HttpServletRequest request) {
         String cookieName = getCookieName(email);
@@ -30,7 +31,8 @@ public class CookieServiceImpl implements CookieService {
     }
 
     @Override
-    public Cookie getNewCookie(Cart cart, String email, Integer timeout) throws JsonProcessingException {
+    public Cookie getNewCookie(Cart cart, String email, Integer timeout)
+            throws JsonProcessingException {
         String cartJson = objectMapper.writeValueAsString(cart);
         String encodedUpdatedCart = Base64.getUrlEncoder().encodeToString(cartJson.getBytes());
 

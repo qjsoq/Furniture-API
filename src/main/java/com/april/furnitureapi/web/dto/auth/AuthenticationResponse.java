@@ -1,8 +1,7 @@
 package com.april.furnitureapi.web.dto.auth;
 
-import lombok.Data;
-
 import java.util.Date;
+import lombok.Data;
 
 @Data
 public class AuthenticationResponse {

@@ -8,13 +8,12 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
@@ -22,7 +21,8 @@ public class FurnitureMapDeserializer extends JsonDeserializer<Map<Furniture, In
     FurnitureRepository userRepository;
 
     @Override
-    public Map<Furniture, Integer> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public Map<Furniture, Integer> deserialize(JsonParser p, DeserializationContext ctxt)
+            throws IOException {
         ObjectCodec codec = p.getCodec();
         ObjectNode node = codec.readTree(p);
         Iterator<Map.Entry<String, JsonNode>> fields = node.fields();

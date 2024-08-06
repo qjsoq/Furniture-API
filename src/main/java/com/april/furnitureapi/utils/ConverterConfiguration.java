@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ConverterConfiguration implements WebMvcConfigurer {
     private final StringToFurnitureCategoryConverter stringToFurnitureCategoryConverter;
     private final StringToFurnitureDomainConverter domainConverter;
+
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(stringToFurnitureCategoryConverter);
