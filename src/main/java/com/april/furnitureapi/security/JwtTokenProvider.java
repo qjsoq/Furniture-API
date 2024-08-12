@@ -10,16 +10,19 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class JwtTokenProvider {
     @Value("${JWT_SECRET}")
     String jwtSecret;
-    @Value(("${jwt.issuer}"))
+    @Value("${JWT_ISSUER}")
     String jwtIssuer;
 
     public String generateToken(User user) {

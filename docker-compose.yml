@@ -1,0 +1,26 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 9090:9090
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/localdb?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: localdb
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      VERIFY_EMAIL_HOST: ${VERIFY_EMAIL_HOST}
+    depends_on:
+      - database
+  database:
+    image: mysql:oraclelinux9
+    environment:
+      MYSQL_DATABASE: localdb
+      MYSQL_ROOT_PASSWORD: localdb
+    ports:
+      - 3306:3306
