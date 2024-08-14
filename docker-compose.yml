@@ -2,6 +2,7 @@ services:
   server:
     build:
       context: .
+    container_name: furniture-server
     ports:
       - 9090:9090
     environment:
@@ -16,11 +17,17 @@ services:
       EMAIL_PORT: ${EMAIL_PORT}
       VERIFY_EMAIL_HOST: ${VERIFY_EMAIL_HOST}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
   database:
     image: mysql:oraclelinux9
+    container_name: furnituredb
     environment:
       MYSQL_DATABASE: localdb
       MYSQL_ROOT_PASSWORD: localdb
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
     ports:
       - 3306:3306
