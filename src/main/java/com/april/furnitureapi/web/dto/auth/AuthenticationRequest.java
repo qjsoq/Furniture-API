@@ -11,6 +11,6 @@ public class AuthenticationRequest {
     @Email(message = "Provide valid email")
     String email;
     @NotBlank(message = "Specify password")
-    @Size(min = 6, max = 32, message = "Enter at least 6 and less than 32 characters")
+    @Size(min = 5, max = 32, message = "Enter at least 6 and less than 32 characters")
     String password;
 }

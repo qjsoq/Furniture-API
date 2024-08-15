@@ -21,7 +21,7 @@ public class UserCreationDto {
     @Size(min = 3, max = 32, message = "Username must contain at least 3 characters, and no more than 32 characters")
     String username;
     @NotBlank(message = "Specify password")
-    @Size(min = 6, max = 32, message = "Enter at least 6 and less than 32 characters")
+    @Size(min = 5, max = 32, message = "Enter at least 6 and less than 32 characters")
     String password;
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Provide valid email")
