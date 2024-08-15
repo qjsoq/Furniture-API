@@ -2,9 +2,9 @@ package com.april.furnitureapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,7 +38,7 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-
+    @Column(unique = true)
     String name;
 
     @ManyToMany(mappedBy = "roles")
