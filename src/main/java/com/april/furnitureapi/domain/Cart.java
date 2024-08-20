@@ -64,6 +64,17 @@ public class Cart {
     @Column(name = "quantity")
     Map<Furniture, Integer> items;
 
+    public void addItem(Furniture furniture) {
+        this.items.merge(furniture, 1, Integer::sum);
+        setPrice(this.price == null ? furniture.getPrice() : this.price + furniture.getPrice());
+    }
+
+    public void removeItem(Furniture furniture) {
+        setPrice(
+                getItems().containsKey(furniture) ? getPrice() - furniture.getPrice() :
+                        getPrice());
+        getItems().computeIfPresent(furniture, (key, value) -> value == 1 ? null : value - 1);
+    }
 
     public static class FurnitureMapSerializer extends JsonSerializer<Map<Furniture, Integer>> {
         @Override
