@@ -43,4 +43,8 @@ public class Warehouse {
     @MapKeyJoinColumn(name = "furniture_id")
     @Column(name = "quantity")
     Map<Furniture, Integer> storage;
+
+    public void addFurniture(Furniture furniture, Integer amount) {
+        this.storage.merge(furniture, amount, Integer::sum);
+    }
 }

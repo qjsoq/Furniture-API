@@ -65,7 +65,7 @@ public class FurnitureServiceImpl implements FurnitureService {
                 .orElseThrow(() -> new WarehouseNotFoundException(
                         "Warehouse was not found"
                 ));
-        warehouse.getStorage().put(furniture, amount);
+        warehouse.addFurniture(furniture, amount);
         return furnitureRepository.save(furniture);
     }
 
