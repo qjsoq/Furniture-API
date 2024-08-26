@@ -63,8 +63,7 @@ public class CartServiceImpl implements CartService {
                         "We dont have the required amount of furniture items %s in our warehouses".formatted(
                                 furniture.getVendorCode())
                 ));
-        cart.getItems().merge(furniture, 1, Integer::sum);
-        cart.setPrice(cart.getPrice() + furniture.getPrice());
+        cart.addItem(furniture);
         return cart;
     }
 
@@ -75,10 +74,7 @@ public class CartServiceImpl implements CartService {
                         "Furniture with provided vendor code %s does not exist".formatted(
                                 vendorCode)
                 ));
-        cart.setPrice(
-                cart.getItems().containsKey(furniture) ? cart.getPrice() - furniture.getPrice() :
-                        cart.getPrice());
-        cart.getItems().computeIfPresent(furniture, (key, value) -> value == 1 ? null : value - 1);
+        cart.removeItem(furniture);
         return cart;
     }
 

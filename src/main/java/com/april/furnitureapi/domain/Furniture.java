@@ -76,4 +76,5 @@ public class Furniture {
     @OneToMany(mappedBy = "furniture", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonProperty("comments")
     List<Comment> comments = new ArrayList<>();
+
 }
