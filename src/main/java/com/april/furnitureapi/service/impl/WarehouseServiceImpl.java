@@ -36,7 +36,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 ));
         var furniture = furnitureRepository.findByVendorCode(vendorCode).get();
         furniture.setAvailability(Availability.INSTOCK);
-        warehouse.getStorage().put(furniture, warehouse.getStorage().get(furniture) + amount);
+        warehouse.addFurniture(furniture, amount);
         warehouseRepository.save(warehouse);
         furnitureRepository.save(furniture);
         return warehouse;
