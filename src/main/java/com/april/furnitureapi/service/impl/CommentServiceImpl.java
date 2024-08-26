@@ -22,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment create(Comment comment, String vendorCode, String email) {
         comment.setAuthor(userService.findByEmail(email));
         var furniture = furnitureService.findByVendorCode(vendorCode);
-        comment.setFurniture(updateReviews(comment.getRating(), furniture));
+        comment.setFurniture(updateRating(comment.getRating(), furniture));
         return commentRepository.save(comment);
     }
 
@@ -32,15 +32,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(id);
     }
 
-    private Furniture updateReviews(Double rating, Furniture furniture) {
+    private Furniture updateRating(Double rating, Furniture furniture) {
         int numberOfReviews = furniture.getNumberOfReviews();
         if (numberOfReviews == 0) {
             furniture.setRating(String.valueOf(rating));
             return furniture;
         }
         double newRating =
-                ((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating) /
-                        (numberOfReviews + 1);
+                ((numberOfReviews * Double.parseDouble(furniture.getRating())) + rating)
+                        / (numberOfReviews + 1);
         furniture.setRating(String.format("%.1f", newRating));
         return furniture;
     }

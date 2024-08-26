@@ -29,6 +29,24 @@ public class FurnitureServiceImpl implements FurnitureService {
     private UserService userService;
     private WarehouseRepository warehouseRepository;
 
+    private static List<Furniture> initialSorting(List<Furniture> unsortedList) {
+        Map<Boolean, List<Furniture>> availabilityMap = unsortedList.stream()
+                .collect(Collectors.partitioningBy(
+                        (furniture -> furniture.getAvailability().equals(Availability.OUTSTOCK))
+                ));
+        List<Furniture> filteredList = new ArrayList<>(availabilityMap.get(false));
+        filteredList.addAll(availabilityMap.get(true));
+        return filteredList;
+    }
+
+    private static Sort createSortObject(String sortby) {
+        return switch (sortby) {
+            case "cheap" -> Sort.by(Sort.Direction.ASC, "price");
+            case "expensive" -> Sort.by(Sort.Direction.DESC, "price");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
+    }
+
     @Override
     public Furniture saveFurniture(Furniture furniture, String email, Integer amount,
                                    Long warehouseId) {
@@ -37,8 +55,8 @@ public class FurnitureServiceImpl implements FurnitureService {
                 String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000));
         if (furnitureRepository.existsByVendorCode(furniture.getVendorCode())) {
             throw new VendorCodeAlreadyExists(
-                    "The random vendor code %s has already been used, try to save the furniture one more time.".formatted(
-                            furniture.getVendorCode()));
+                    "The random vendor code %s has already been used, try to save the furniture one more time."
+                            .formatted(furniture.getVendorCode()));
         }
         furniture.setCreator(userService.findByEmail(email));
         furniture.setAvailability(expectedAvailability);
@@ -91,23 +109,5 @@ public class FurnitureServiceImpl implements FurnitureService {
     @Override
     public void deleteFurniture(String vendorCode) {
         furnitureRepository.deleteByVendorCode(vendorCode);
-    }
-
-    private static List<Furniture> initialSorting(List<Furniture> unsortedList) {
-        Map<Boolean, List<Furniture>> availabilityMap = unsortedList.stream()
-                .collect(Collectors.partitioningBy(
-                        (furniture -> furniture.getAvailability().equals(Availability.OUTSTOCK))
-                ));
-        List<Furniture> filteredList = new ArrayList<>(availabilityMap.get(false));
-        filteredList.addAll(availabilityMap.get(true));
-        return filteredList;
-    }
-
-    private static Sort createSortObject(String sortby) {
-        return switch (sortby) {
-            case "cheap" -> Sort.by(Sort.Direction.ASC, "price");
-            case "expensive" -> Sort.by(Sort.Direction.DESC, "price");
-            default -> Sort.by(Sort.Direction.DESC, "createdAt");
-        };
     }
 }
