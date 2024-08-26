@@ -105,13 +105,15 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isEmailInUse(String email, UUID id) {
-        return userRepository.findByEmail(email).filter(foundedUser -> foundedUser.getId() != id)
+        return userRepository.findByEmail(email)
+                .filter(foundedUser -> !foundedUser.getId().equals(id))
                 .isPresent();
     }
 
     private boolean isUserNameInUse(String username, UUID id) {
         return userRepository.findByUsername(username)
-                .filter(foundedUser -> foundedUser.getId() != id).isPresent();
+                .filter(foundedUser -> !foundedUser.getId().equals(id))
+                .isPresent();
     }
 
     private Optional<Confirmation> tokenValidation(String token) {

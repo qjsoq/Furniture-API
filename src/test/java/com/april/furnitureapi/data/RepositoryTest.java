@@ -1,10 +1,12 @@
 package com.april.furnitureapi.data;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.april.furnitureapi.config.TestcontainerInitializer;
+import com.april.furnitureapi.domain.Comment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,6 +26,8 @@ class RepositoryTest {
     private CommentRepository commentRepository;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private WarehouseRepository warehouseRepository;
 
     @Test
     @Sql("/users-create.sql")
@@ -31,9 +35,10 @@ class RepositoryTest {
         var user = userRepository.findByEmail("email@gmail.com");
         assertEquals("John", user.get().getName());
     }
+
     @Test
     @Sql({"/users-create.sql", "/furniture-create.sql", "/comments-create.sql"})
-    void deleteFurniture(){
+    void deleteFurniture() {
         furnitureRepository.deleteByVendorCode("4238748");
 
         assertTrue(userRepository.existsByEmailOrUsername("email6@gmail.com", "batya"));
@@ -43,7 +48,7 @@ class RepositoryTest {
 
     @Test
     @Sql({"/users-create.sql", "/furniture-create.sql", "/cart-create.sql"})
-    void addItemInCart(){
+    void addItemInCart() {
         var cart = cartRepository.findByCartCode("3141333").get();
         var furniture = furnitureRepository.findByVendorCode("4238748").get();
         var furniture2 = furnitureRepository.findByVendorCode("1235673").get();
@@ -56,19 +61,20 @@ class RepositoryTest {
 
     @Test
     @Sql({"/users-create.sql", "/furniture-create.sql", "/cart-create.sql"})
-    void deleteCartDoesNotDeleteFurniture(){
+    void deleteCartDoesNotDeleteFurnitureAndUser() {
         var cart = cartRepository.findByCartCode("3141333").get();
         var furniture = furnitureRepository.findByVendorCode("4238748").get();
         cart.addItem(furniture);
 
         cartRepository.deleteByCartCode("3141333");
         assertTrue(furnitureRepository.existsByVendorCode("4238748"));
+        assertTrue(userRepository.existsByEmailOrUsername("email@gmail.com", "qjsoq"));
         assertFalse(cartRepository.existsById(1L));
     }
 
     @Test
     @Sql({"/users-create.sql", "/furniture-create.sql", "/cart-create.sql"})
-    void deleteItemFromCart(){
+    void deleteItemFromCart() {
         var cart = cartRepository.findByCartCode("3141333").get();
         var furniture = furnitureRepository.findByVendorCode("4238748").get();
         cart.addItem(furniture);
@@ -78,4 +84,33 @@ class RepositoryTest {
         assertFalse(cart.getItems().containsKey(furniture));
     }
 
+    @Test
+    @Sql({"/users-create.sql", "/furniture-create.sql", "/comments-create.sql"})
+    void checkComments() {
+        var comment = commentRepository.findById(1L).get();
+        var comment2 = commentRepository.findById(3L).get();
+        var furniture = furnitureRepository.findByVendorCode("4238748").get();
+
+        assertArrayEquals(furniture.getComments().toArray(new Comment[0]),
+                new Comment[] {comment, comment2});
+    }
+
+    @Test
+    @Sql({"/users-create.sql", "/furniture-create.sql", "/comments-create.sql"})
+    void deleteCommentDoesNotDeleteFurniture() {
+        commentRepository.deleteById(1L);
+
+        assertTrue(furnitureRepository.existsById(2L));
+    }
+
+    @Test
+    @Sql({"/users-create.sql", "/furniture-create.sql", "/warehouse-create.sql"})
+    void addItemToWarehouse(){
+        var warehouse = warehouseRepository.findById(1L).get();
+        var furniture = furnitureRepository.findByVendorCode("4238748").get();
+
+        warehouse.addFurniture(furniture, 5);
+        warehouse.addFurniture(furniture, 5);
+        assertEquals(10, warehouseRepository.findById(1L).get().getStorage().get(furniture));
+    }
 }
