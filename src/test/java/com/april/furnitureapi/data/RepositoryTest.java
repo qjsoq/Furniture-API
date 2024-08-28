@@ -3,6 +3,7 @@ package com.april.furnitureapi.data;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.april.furnitureapi.config.TestcontainerInitializer;
@@ -44,6 +45,13 @@ class RepositoryTest {
         assertTrue(userRepository.existsByEmailOrUsername("email6@gmail.com", "batya"));
         assertFalse(commentRepository.existsById(1L));
         assertTrue(userRepository.existsByEmailOrUsername("email@gmail.com", "qjsoq"));
+    }
+    @Test
+    @Sql({"/users-create.sql", "/cart-create.sql"})
+    void testUserCart(){
+        var user = userRepository.findByEmail("email@gmail.com").get();
+
+        assertSame(cartRepository.findByCartCode("3141333").get().getCreator(), user);
     }
 
     @Test
@@ -106,11 +114,11 @@ class RepositoryTest {
     @Test
     @Sql({"/users-create.sql", "/furniture-create.sql", "/warehouse-create.sql"})
     void addItemToWarehouse(){
-        var warehouse = warehouseRepository.findById(1L).get();
+        var warehouse = warehouseRepository.findById(2L).get();
         var furniture = furnitureRepository.findByVendorCode("4238748").get();
 
         warehouse.addFurniture(furniture, 5);
         warehouse.addFurniture(furniture, 5);
-        assertEquals(10, warehouseRepository.findById(1L).get().getStorage().get(furniture));
+        assertEquals(10, warehouseRepository.findById(2L).get().getStorage().get(furniture));
     }
 }

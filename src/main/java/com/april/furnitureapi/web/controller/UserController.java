@@ -46,7 +46,6 @@ public class UserController {
     public ResponseEntity<UserDto> updateSelf(Principal principal,
                                               @RequestBody @Valid UserUpdateDto updateDto) {
         var user = userService.findByEmail(principal.getName());
-        System.out.println(user.getEmail());
         var updatedUser = userService.updateUser(usermapper.partialUpdate(updateDto, user));
         return ResponseEntity.ok(usermapper.toPayload(updatedUser));
     }
