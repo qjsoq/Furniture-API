@@ -41,8 +41,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.getRoles().add(roleRepository.findByName("ROLE_USER").get());
         var confirmation = new Confirmation(user);
-        confirmationRepository.save(confirmation);
-        emailService.sendVerificationEmail(user, confirmation.getToken());
+        //confirmationRepository.save(confirmation);
+        //emailService.sendVerificationEmail(user, confirmation.getToken());
         return userRepository.save(user);
     }
 
@@ -93,12 +93,13 @@ public class UserServiceImpl implements UserService {
 
     public void checkIfUserExists(User user) {
         var email = user.getEmail();
-        var username = user.getUsername();
+        var username = user.getActualUsername();
         var id = user.getId();
         if (isEmailInUse(email, id)) {
             throw new UserAlreadyExistsException(
                     "User with provided email %s exists".formatted(email));
-        } else if (isUserNameInUse(username, id)) {
+        }
+        if (isUsernameInUse(username, id)) {
             throw new UserAlreadyExistsException(
                     "User with provided username %s exists".formatted(username));
         }
@@ -110,7 +111,7 @@ public class UserServiceImpl implements UserService {
                 .isPresent();
     }
 
-    private boolean isUserNameInUse(String username, UUID id) {
+    private boolean isUsernameInUse(String username, UUID id) {
         return userRepository.findByUsername(username)
                 .filter(foundedUser -> !foundedUser.getId().equals(id))
                 .isPresent();

@@ -30,7 +30,6 @@ public class JwtTokenProvider {
                 .withIssuer(jwtIssuer)
                 .withSubject(user.getEmail())
                 .withClaim("lastname", user.getLastname())
-                //.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                 .withExpiresAt(setTime())
                 .sign(Algorithm.HMAC512(jwtSecret));
     }

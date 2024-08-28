@@ -1,7 +1,6 @@
 package com.april.furnitureapi.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,8 +39,11 @@ public class User implements UserDetails {
     String name;
     @Column(name = "last_name")
     String lastname;
+    @Column(name = "username")
     String username;
+    @Column(name = "email")
     String email;
+    @Column(name = "password")
     String password;
     @Column(name = "verified")
     boolean isVerified;
@@ -65,6 +67,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public String getActualUsername() {
+        return username;
     }
 
     @Override
