@@ -35,10 +35,13 @@ public class WarehouseServiceImpl implements WarehouseService {
                         "Warehouse with this id %s not found".formatted(id)
                 ));
         var furniture = furnitureRepository.findByVendorCode(vendorCode).get();
+        System.out.println(furniture + "1");
         furniture.setAvailability(Availability.INSTOCK);
+        System.out.println(furniture + "2");
+        furnitureRepository.save(furniture);
+        System.out.println(furniture + "3");
         warehouse.addFurniture(furniture, amount);
         warehouseRepository.save(warehouse);
-        furnitureRepository.save(furniture);
         return warehouse;
     }
 
