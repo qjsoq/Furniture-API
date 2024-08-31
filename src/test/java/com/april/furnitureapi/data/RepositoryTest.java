@@ -46,9 +46,10 @@ class RepositoryTest {
         assertFalse(commentRepository.existsById(1L));
         assertTrue(userRepository.existsByEmailOrUsername("email@gmail.com", "qjsoq"));
     }
+
     @Test
     @Sql({"/users-create.sql", "/cart-create.sql"})
-    void testUserCart(){
+    void testUserCart() {
         var user = userRepository.findByEmail("email@gmail.com").get();
 
         assertSame(cartRepository.findByCartCode("3141333").get().getCreator(), user);
@@ -113,7 +114,7 @@ class RepositoryTest {
 
     @Test
     @Sql({"/users-create.sql", "/furniture-create.sql", "/warehouse-create.sql"})
-    void addItemToWarehouse(){
+    void addItemToWarehouse() {
         var warehouse = warehouseRepository.findById(2L).get();
         var furniture = furnitureRepository.findByVendorCode("4238748").get();
 
