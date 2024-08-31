@@ -83,7 +83,7 @@ class UserServiceTest {
 
     @Test
     @Sql({"/users-create.sql", "/cart-create.sql"})
-    void testGetUsersOrders(){
+    void testGetUsersOrders() {
         var userOrders = userService.getMyOrders("email@gmail.com");
 
         assertEquals(3, userOrders.size());

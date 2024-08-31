@@ -41,7 +41,8 @@ public class CartServiceImpl implements CartService {
                         "Furniture with provided vendor code %s does not exist".formatted(
                                 vendorCode)
                 ));
-        return Cart.builder().creator(user).items(Map.of(furniture, 1)).price(furniture.getPrice())
+        return Cart.builder().creator(user).items(new HashMap<>(Map.of(furniture, 1)))
+                .price(furniture.getPrice())
                 .cartCode(String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000))
                 .build();
     }
