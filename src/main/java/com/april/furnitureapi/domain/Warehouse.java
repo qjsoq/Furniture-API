@@ -45,7 +45,10 @@ public class Warehouse {
     Address address;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "warehouse_storage", joinColumns = @JoinColumn(name = "warehouse_id"))
+    @CollectionTable(
+            name = "warehouse_storage",
+            joinColumns = @JoinColumn(name = "warehouse_id")
+    )
     @MapKeyJoinColumn(name = "furniture_id")
     @Column(name = "quantity")
     Map<Furniture, Integer> storage = new HashMap<>();

@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -73,8 +75,26 @@ public class Furniture {
     @Column(name = "availability")
     @JsonProperty("availability")
     Availability availability;
-    @OneToMany(mappedBy = "furniture", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "furniture", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonProperty("comments")
     List<Comment> comments = new ArrayList<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Furniture furniture = (Furniture) o;
+        return Objects.equals(id, furniture.id) &&
+                Objects.equals(title, furniture.title) &&
+                Objects.equals(vendorCode, furniture.vendorCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, vendorCode);
+    }
 }
