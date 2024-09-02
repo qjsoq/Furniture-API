@@ -52,7 +52,7 @@ class RepositoryTest {
     void testUserCart() {
         var user = userRepository.findByEmail("email@gmail.com").get();
 
-        assertSame(cartRepository.findByCartCode("3141333").get().getCreator(), user);
+        assertSame(user, cartRepository.findByCartCode("3141333").get().getCreator());
     }
 
     @Test

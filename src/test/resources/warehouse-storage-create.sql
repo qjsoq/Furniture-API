@@ -1,15 +1,13 @@
 ALTER TABLE warehouse_storage
-    DROP FOREIGN KEY FKqa5vjpwt80ahdnyj1nhxs1qbm;
+    DROP FOREIGN KEY FKqa5vjpwt80ahdnyj1nhxs1qbm,
+    DROP FOREIGN KEY FK2xxglyarsipgflg3l6g234a5t;
+
 
 ALTER TABLE warehouse_storage
     ADD CONSTRAINT FKqa5vjpwt80ahdnyj1nhxs1qbm
         FOREIGN KEY (warehouse_id)
             REFERENCES warehouse (id)
-            ON DELETE CASCADE;
-ALTER TABLE warehouse_storage
-    DROP FOREIGN KEY FK2xxglyarsipgflg3l6g234a5t;
-
-ALTER TABLE warehouse_storage
+            ON DELETE CASCADE,
     ADD CONSTRAINT FK2xxglyarsipgflg3l6g234a5t
         FOREIGN KEY (furniture_id)
             REFERENCES furniture (id)

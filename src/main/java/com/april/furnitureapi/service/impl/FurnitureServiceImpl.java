@@ -39,8 +39,8 @@ public class FurnitureServiceImpl implements FurnitureService {
         return filteredList;
     }
 
-    private static Sort createSortObject(String sortby) {
-        return switch (sortby) {
+    private static Sort createSortObject(String sortBy) {
+        return switch (sortBy) {
             case "cheap" -> Sort.by(Sort.Direction.ASC, "price");
             case "expensive" -> Sort.by(Sort.Direction.DESC, "price");
             default -> Sort.by(Sort.Direction.DESC, "createdAt");
@@ -50,6 +50,10 @@ public class FurnitureServiceImpl implements FurnitureService {
     @Override
     public Furniture saveFurniture(Furniture furniture, String email, Integer amount,
                                    Long warehouseId) {
+        var warehouse = warehouseRepository.findById(warehouseId)
+                .orElseThrow(() -> new WarehouseNotFoundException(
+                        "Warehouse was not found"
+                ));
         var expectedAvailability = (amount == 0 ? Availability.ONCOMING : Availability.INSTOCK);
         furniture.setVendorCode(
                 String.valueOf(new Random().nextInt(9999999 - 1000000 + 1) + 1000000));
@@ -61,12 +65,11 @@ public class FurnitureServiceImpl implements FurnitureService {
         furniture.setCreator(userService.findByEmail(email));
         furniture.setAvailability(expectedAvailability);
         furniture.setNumberOfReviews(0);
-        var warehouse = warehouseRepository.findById(warehouseId)
-                .orElseThrow(() -> new WarehouseNotFoundException(
-                        "Warehouse was not found"
-                ));
+
         warehouse.addFurniture(furniture, amount);
-        return furnitureRepository.save(furniture);
+        furnitureRepository.save(furniture);
+        warehouseRepository.save(warehouse);
+        return furniture;
     }
 
     @Override
