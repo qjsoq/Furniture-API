@@ -97,4 +97,11 @@ public class Furniture {
     public int hashCode() {
         return Objects.hash(id, title, vendorCode);
     }
+
+    @Override
+    public String toString() {
+        return "Furniture{" +
+                "title='" + title + '\'' +
+                '}';
+    }
 }
