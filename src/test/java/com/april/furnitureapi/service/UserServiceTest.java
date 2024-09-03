@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.april.furnitureapi.config.TestcontainerInitializer;
 import com.april.furnitureapi.data.CartRepository;
+import com.april.furnitureapi.data.ConfirmationRepository;
 import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
@@ -27,12 +28,15 @@ class UserServiceTest {
     @Autowired
     private CartRepository cartRepository;
     @Autowired
+    private ConfirmationRepository confirmationRepository;
+    @Autowired
     private UserService userService;
     @Autowired
     private PasswordEncoder encoder;
 
     @AfterEach
     void cleanAll() {
+        confirmationRepository.deleteAll();
         cartRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -73,9 +77,12 @@ class UserServiceTest {
         user.setEmail("gmail@gmail.com");
 
         userService.signUp(user);
+
+        var confirmation = confirmationRepository.findAll().get(0);
         assertTrue(userRepository.findByEmail("gmail@gmail.com").isPresent());
         assertTrue(encoder.matches("123456",
                 userRepository.findByEmail("gmail@gmail.com").get().getPassword()));
+        assertEquals(user, confirmation.getUser());
     }
 
     @Test
