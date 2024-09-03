@@ -54,7 +54,7 @@ public class AuthController {
     @GetMapping("/")
     public ResponseEntity<VerificationDto> verifyToken(@RequestParam("token") String token) {
         boolean isVerified =
-                userService.verifyToken(token);  // Assuming verifyToken returns a boolean
+                userService.verifyToken(token);
         return ResponseEntity.ok().body(VerificationDto.builder()
                 .message("Your account was successfully verified!")
                 .isVerified(isVerified)
