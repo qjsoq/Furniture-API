@@ -49,6 +49,7 @@ class UserServiceTest {
 
         user.setLastname(newLastName);
         userService.updateUser(user);
+        
         assertEquals(userRepository.findByEmail("email1@gmail.com").get().getLastname(),
                 newLastName);
     }
@@ -60,9 +61,10 @@ class UserServiceTest {
         String username = "qjsoq5";
         var user = userService.findByEmail("email1@gmail.com");
         var user2 = userService.findByEmail("email2@gmail.com");
-        System.out.println(user2.getUsername() + ", " + user.getUsername());
+       
         user2.setEmail(email);
         user.setUsername(username);
+        
         assertThrowsExactly(UserAlreadyExistsException.class, () -> userService.updateUser(user));
         assertThrowsExactly(UserAlreadyExistsException.class, () -> userService.updateUser(user2));
     }
@@ -77,8 +79,9 @@ class UserServiceTest {
         user.setEmail("gmail@gmail.com");
 
         userService.signUp(user);
-
+      
         var confirmation = confirmationRepository.findAll().get(0);
+
         assertTrue(userRepository.findByEmail("gmail@gmail.com").isPresent());
         assertTrue(encoder.matches("123456",
                 userRepository.findByEmail("gmail@gmail.com").get().getPassword()));
