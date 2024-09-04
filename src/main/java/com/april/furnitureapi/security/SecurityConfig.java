@@ -32,7 +32,7 @@ public class SecurityConfig {
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(API + AUTH + "/**")
-                        .permitAll() // Ensure this is allowing everything under /api/v1/auth/
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, API + "/furniture/**").permitAll()
                         .requestMatchers(HttpMethod.GET, API + "/warehouse/**").permitAll()
                         .anyRequest().authenticated())

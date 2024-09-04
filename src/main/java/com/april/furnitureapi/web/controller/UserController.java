@@ -1,6 +1,7 @@
 package com.april.furnitureapi.web.controller;
 
 import static com.april.furnitureapi.web.WebConstants.API;
+import static com.april.furnitureapi.web.WebConstants.USERS;
 
 import com.april.furnitureapi.service.UserService;
 import com.april.furnitureapi.web.dto.cart.CartDto;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = API + "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = API + USERS, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class UserController {
     UserService userService;
