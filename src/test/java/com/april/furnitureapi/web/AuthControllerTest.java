@@ -37,7 +37,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 @AutoConfigureMockMvc
 class AuthControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private String url = API + AUTH;
+    private final String url = API + AUTH;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -65,6 +65,16 @@ class AuthControllerTest {
                         "notusedemail@gmail.com"),
                 Arguments.of("", "", "", "", "")
         );
+    }
+
+    private static UserCreationDto getValidUser() {
+        var newUser = new UserCreationDto();
+        newUser.setEmail("notused@email.com");
+        newUser.setPassword("123456");
+        newUser.setUsername("notUsedUsername");
+        newUser.setName("Name");
+        newUser.setLastname("Lastname");
+        return newUser;
     }
 
     @AfterEach
@@ -124,9 +134,9 @@ class AuthControllerTest {
 
     @Test
     @Sql("/users-create.sql")
-    void testForbidSignInNonExistentUser() throws Exception{
+    void testForbidSignInNonExistentUser() throws Exception {
         var authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("notExistingEmail@gmail.com");
+        authenticationRequest.setEmail("nonExistentEmail@gmail.com");
         authenticationRequest.setPassword("123456");
 
         var authenticationResponse = mockMvc.perform(post(url + "/" + SIGN_IN)
@@ -134,11 +144,12 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(authenticationRequest)));
 
         authenticationResponse.andExpectAll(status().isNotFound(),
-                jsonPath("$.message").value("User with email nonExistentEmail@gmail.com doesn`t exist"));
+                jsonPath("$.message").value(
+                        "User with email nonExistentEmail@gmail.com doesn`t exist"));
     }
 
     @Test
-    void testVerifyToken() throws Exception{
+    void testVerifyToken() throws Exception {
         var newUser = getValidUser();
 
         mockMvc.perform(post(url + "/" + SIGN_UP)
@@ -147,21 +158,11 @@ class AuthControllerTest {
 
         var confirmationToken = confirmationRepository.findAll().get(0).getToken();
 
-        var response = mockMvc.perform(get(url + "/?token=" + confirmationToken))
+        mockMvc.perform(get(url + "/?token=" + confirmationToken))
                 .andExpectAll(status().is2xxSuccessful(),
                         jsonPath("$.message").value("Your account was successfully verified!"),
                         jsonPath("$.verified").value(true));
         assertTrue(userService.findByEmail("notused@email.com").isVerified());
-    }
-
-    private static UserCreationDto getValidUser(){
-        var newUser = new UserCreationDto();
-        newUser.setEmail("notused@email.com");
-        newUser.setPassword("123456");
-        newUser.setUsername("notUsedUsername");
-        newUser.setName("Name");
-        newUser.setLastname("Lastname");
-        return newUser;
     }
 
 
