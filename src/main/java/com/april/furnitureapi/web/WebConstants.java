@@ -8,7 +8,7 @@ public class WebConstants {
     public static final String API = "/api/v1";
     public static final String SIGN_UP = "/sign-up";
     public static final String SIGN_IN = "/sign-in";
-    public static final String STORE = "/store";
+    public static final String USERS = "/users";
     public static final String UPLOAD = "/upload";
     public static final String CREATE = "/create";
     public static final String DOWNLOAD = "/download";
