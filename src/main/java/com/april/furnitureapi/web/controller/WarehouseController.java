@@ -1,6 +1,7 @@
 package com.april.furnitureapi.web.controller;
 
 import static com.april.furnitureapi.web.WebConstants.API;
+import static com.april.furnitureapi.web.WebConstants.WAREHOUSE;
 
 import com.april.furnitureapi.service.WarehouseService;
 import com.april.furnitureapi.web.dto.warehouse.WarehouseDetailedDto;
@@ -10,6 +11,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(API + "/warehouse")
+@RequestMapping(value = API + WAREHOUSE, produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class WarehouseController {
     private final WarehouseService warehouseService;
