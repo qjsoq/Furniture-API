@@ -23,7 +23,7 @@ public class CartChecker {
 
     public boolean isUserTheAuthor(String cartCode, String email) {
         var cart = cartRepository.findByCartCode(cartCode)
-                .orElseThrow(() -> new CommentNotFoundException(
+                .orElseThrow(() -> new CartNotFoundException(
                         "Cart not found"
                 ));
         return cart.getCreator().getEmail().equals(email);

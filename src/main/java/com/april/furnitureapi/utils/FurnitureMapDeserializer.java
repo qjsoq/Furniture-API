@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 public class FurnitureMapDeserializer extends JsonDeserializer<Map<Furniture, Integer>> {
-    FurnitureRepository userRepository;
+    FurnitureRepository furnitureRepository;
 
     @Override
     public Map<Furniture, Integer> deserialize(JsonParser p, DeserializationContext ctxt)
@@ -41,6 +41,6 @@ public class FurnitureMapDeserializer extends JsonDeserializer<Map<Furniture, In
     }
 
     private Furniture getFurnitureById(Long id) {
-        return userRepository.findById(id).get();
+        return furnitureRepository.findById(id).get();
     }
 }
