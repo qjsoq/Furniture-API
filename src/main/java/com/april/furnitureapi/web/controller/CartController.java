@@ -1,6 +1,7 @@
 package com.april.furnitureapi.web.controller;
 
 import static com.april.furnitureapi.web.WebConstants.API;
+import static com.april.furnitureapi.web.WebConstants.CART;
 
 import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.exception.CartNotFoundException;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = API + "/cart", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = API + CART, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CartController {
     private final CartService cartService;
     private final CookieService cookieService;
@@ -47,9 +48,7 @@ public class CartController {
         } else {
             throw new CartNotFoundException("You have not add anything to the cart");
         }
-        newCart.setPrice(0L);
-        newCart.setItems(new HashMap<>());
-        response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 1));
+        response.addCookie(cookieService.getNewCookie(newCart, principal.getName(), 0));
         return ResponseEntity.created(URI.create("")).body(cartMapper.toDetailedDto(newCart));
     }
 
@@ -74,7 +73,7 @@ public class CartController {
     }
 
     @DeleteMapping("/delete/{vendorCode}")
-    public ResponseEntity<Cart> deleteFromCart(@PathVariable String vendorCode, Principal principal,
+    public ResponseEntity<Void> deleteFromCart(@PathVariable String vendorCode, Principal principal,
                                                HttpServletResponse response,
                                                HttpServletRequest request)
             throws JsonProcessingException {

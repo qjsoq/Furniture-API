@@ -7,6 +7,7 @@ import com.april.furnitureapi.data.WarehouseRepository;
 import com.april.furnitureapi.domain.Availability;
 import com.april.furnitureapi.domain.Cart;
 import com.april.furnitureapi.domain.Furniture;
+import com.april.furnitureapi.exception.CartNotFoundException;
 import com.april.furnitureapi.exception.FurnitureNotFoundException;
 import com.april.furnitureapi.exception.UserNotFoundException;
 import com.april.furnitureapi.service.CartService;
@@ -97,6 +98,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void deleteCart(String cartCode) {
+        if (!cartRepository.existsByCartCode(cartCode)) {
+            throw new CartNotFoundException("Non existent cart");
+        }
         cartRepository.deleteByCartCode(cartCode);
     }
 
