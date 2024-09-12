@@ -10,7 +10,7 @@ public class WebConstants {
     public static final String SIGN_IN = "/sign-in";
     public static final String USERS = "/users";
     public static final String WAREHOUSE = "/warehouse";
-    public static final String CREATE = "/create";
+    public static final String CART = "/cart";
     public static final String DOWNLOAD = "/download";
     public static final String DELETE = "/delete";
     public static final String OPEN = "/open";

@@ -11,6 +11,7 @@ import com.april.furnitureapi.data.FurnitureRepository;
 import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.data.WarehouseRepository;
 import com.april.furnitureapi.domain.Availability;
+import com.april.furnitureapi.exception.CartNotFoundException;
 import com.april.furnitureapi.exception.FurnitureNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -104,5 +105,12 @@ class CartServiceTest {
         assertEquals(Availability.OUTSTOCK, stol.getAvailability());
         assertEquals(112800, cart.getPrice());
         assertTrue(cartRepository.findByCartCode(varcode).isPresent());
+    }
+
+    @Test
+    @Sql({"/users-create.sql", "/furniture-create.sql", "/cart-create.sql",
+            "/cart-content-create.sql"})
+    void testDeleteNonExistentCart() {
+        assertThrowsExactly(CartNotFoundException.class, () -> cartService.deleteCart("1234567"));
     }
 }
