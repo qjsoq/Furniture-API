@@ -4,6 +4,7 @@ import com.april.furnitureapi.domain.FurnitureCategory;
 import com.april.furnitureapi.domain.FurnitureDomain;
 import com.april.furnitureapi.utils.PriceConstraint;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -23,9 +24,13 @@ public class FurnitureCreationDto {
     @NotBlank(message = "Description must be filled")
     @Size(min = 4, max = 2048, message = "Description of the furniture cannot be less than 4 and more than 2048 characters")
     String description;
+    @NotNull
     FurnitureCategory category;
+    @NotNull
     FurnitureDomain domain;
     @PositiveOrZero
+    @NotNull
     Integer amount;
+    @NotNull
     Long warehouseId;
 }

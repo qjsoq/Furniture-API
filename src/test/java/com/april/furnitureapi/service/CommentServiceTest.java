@@ -68,7 +68,6 @@ class CommentServiceTest {
 
         var furniture = furnitureRepository.findByVendorCode("4326746").get();
         assertEquals(4, furniture.getComments().size());
-        System.out.println(furniture.getRating());
         assertEquals(3.5, Double.parseDouble(furniture.getRating()));
     }
 }
