@@ -1,6 +1,7 @@
 package com.april.furnitureapi.web.controller;
 
 import static com.april.furnitureapi.web.WebConstants.API;
+import static com.april.furnitureapi.web.WebConstants.FURNITURE;
 
 import com.april.furnitureapi.domain.FurnitureCategory;
 import com.april.furnitureapi.domain.FurnitureDomain;
@@ -35,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = API + "/furniture", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = API + FURNITURE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class FurnitureController {
     FurnitureMapper furnitureMapper;
     FurnitureService furnitureService;
