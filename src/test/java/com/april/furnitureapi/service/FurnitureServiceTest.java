@@ -69,7 +69,8 @@ class FurnitureServiceTest {
 
 
         assertEquals(4,
-                (furnitureSortedByNovelty.size() & furnitureSortedFromCheapToExpensive.size() &
+                (furnitureSortedByNovelty.size() & furnitureSortedFromCheapToExpensive.size()
+                        &
                         furnitureSortedFromExpensiveToCheap.size()));
         Stream.of(furnitureSortedByNovelty, furnitureSortedFromCheapToExpensive,
                         furnitureSortedFromExpensiveToCheap)

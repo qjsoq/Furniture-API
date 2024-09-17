@@ -42,8 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         String presentToken = token.get();
         try {
-            Optional<DecodedJWT> decodedJWT = tokenProvider.decodedJwt(presentToken);
-            if (decodedJWT.isPresent()) {
+            Optional<DecodedJWT> decodedJwt = tokenProvider.decodedJwt(presentToken);
+            if (decodedJwt.isPresent()) {
                 String email = tokenProvider.getEmailFromToken(presentToken);
                 var user = userDetailsService.loadUserByUsername(email);
                 var authentication =

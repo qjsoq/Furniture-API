@@ -103,8 +103,10 @@ public class User implements UserDetails {
             return false;
         }
         User user = (User) o;
-        return this.id.equals(user.id) &&
-                Objects.equals(username, user.username) &&
+        return this.id.equals(user.id)
+                &&
+                Objects.equals(username, user.username)
+                &&
                 Objects.equals(email, user.email);
     }
 
