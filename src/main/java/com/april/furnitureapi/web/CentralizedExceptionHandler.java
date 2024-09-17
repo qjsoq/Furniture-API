@@ -44,7 +44,7 @@ public class CentralizedExceptionHandler {
             InvalidDomainValueException.class,
             InvalidAvailabilityStatus.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ErrorResponse InvalidParametersExceptionHandler(RuntimeException runtimeException) {
+    public ErrorResponse invalidParametersExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getLocalizedMessage());
     }
 
@@ -52,13 +52,13 @@ public class CentralizedExceptionHandler {
             CommentNotFoundException.class,
             CartNotFoundException.class, WarehouseNotFoundException.class})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ErrorResponse NotFoundExceptionHandler(RuntimeException runtimeException) {
+    public ErrorResponse notFoundExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getMessage());
     }
 
     @ExceptionHandler({JWTVerificationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse JwtVerificationExceptionHandler(RuntimeException runtimeException) {
+    public ErrorResponse jwtVerificationExceptionHandler(RuntimeException runtimeException) {
         return new ErrorResponse(runtimeException.getMessage() + " provided token not valid(");
     }
 

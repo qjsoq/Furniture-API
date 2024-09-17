@@ -88,8 +88,10 @@ public class Furniture {
             return false;
         }
         Furniture furniture = (Furniture) o;
-        return Objects.equals(id, furniture.id) &&
-                Objects.equals(title, furniture.title) &&
+        return Objects.equals(id, furniture.id)
+                &&
+                Objects.equals(title, furniture.title)
+                &&
                 Objects.equals(vendorCode, furniture.vendorCode);
     }
 
@@ -100,8 +102,10 @@ public class Furniture {
 
     @Override
     public String toString() {
-        return "Furniture{" +
-                "title='" + title + '\'' +
+        return "Furniture{"
+                +
+                "title='" + title + '\''
+                +
                 '}';
     }
 }

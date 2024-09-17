@@ -1,6 +1,6 @@
 package com.april.furnitureapi.service.impl;
 
-import static com.april.furnitureapi.utils.EmailUtils.getVerificationURL;
+import static com.april.furnitureapi.utils.EmailUtils.getVerificationUrl;
 
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.service.EmailService;
@@ -28,7 +28,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             var context = new Context();
             context.setVariables(
-                    Map.of("name", user.getName(), "url", getVerificationURL(verifyHost, token)));
+                    Map.of("name", user.getName(), "url", getVerificationUrl(verifyHost, token)));
             String text = templateEngine.process(EMAIL_TEMPLATE, context);
             var message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8);

@@ -12,5 +12,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     Optional<Cart> findByCartCode(String cartCode);
 
     void deleteByCartCode(String cartCode);
+
     boolean existsByCartCode(String cartCode);
 }
