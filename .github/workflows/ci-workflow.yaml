@@ -9,7 +9,7 @@ jobs:
         with:
           distribution: 'oracle'
           java-version: '17'
-      - run: mvn test
+      - run:  mvn -B install --file pom.xml
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
