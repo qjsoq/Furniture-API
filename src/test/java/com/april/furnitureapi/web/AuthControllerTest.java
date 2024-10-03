@@ -17,9 +17,13 @@ import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.service.UserService;
 import com.april.furnitureapi.web.dto.auth.AuthenticationRequest;
 import com.april.furnitureapi.web.dto.user.UserCreationDto;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,7 +40,14 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = TestcontainerInitializer.class)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class AuthControllerTest {
+    @RegisterExtension
+    static GreenMailExtension greenMail =
+            new GreenMailExtension(ServerSetupTest.SMTP)
+                    .withConfiguration(
+                            GreenMailConfiguration.aConfig().withUser("dima", "test"))
+                    .withPerMethodLifecycle(true);
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String url = API + AUTH;
     @Autowired
