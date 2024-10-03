@@ -1,5 +1,6 @@
 package com.april.furnitureapi.service;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,19 +11,31 @@ import com.april.furnitureapi.data.ConfirmationRepository;
 import com.april.furnitureapi.data.UserRepository;
 import com.april.furnitureapi.domain.User;
 import com.april.furnitureapi.exception.UserAlreadyExistsException;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = TestcontainerInitializer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 class UserServiceTest {
+    @RegisterExtension
+    static GreenMailExtension greenMail =
+            new GreenMailExtension(ServerSetupTest.SMTP)
+                    .withConfiguration(
+                            GreenMailConfiguration.aConfig().withUser("dima", "test"))
+                    .withPerMethodLifecycle(false);
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -49,7 +62,7 @@ class UserServiceTest {
 
         user.setLastname(newLastName);
         userService.updateUser(user);
-        
+
         assertEquals(userRepository.findByEmail("email1@gmail.com").get().getLastname(),
                 newLastName);
     }
@@ -61,10 +74,10 @@ class UserServiceTest {
         String username = "qjsoq5";
         var user = userService.findByEmail("email1@gmail.com");
         var user2 = userService.findByEmail("email2@gmail.com");
-       
+
         user2.setEmail(email);
         user.setUsername(username);
-        
+
         assertThrowsExactly(UserAlreadyExistsException.class, () -> userService.updateUser(user));
         assertThrowsExactly(UserAlreadyExistsException.class, () -> userService.updateUser(user2));
     }
@@ -79,9 +92,12 @@ class UserServiceTest {
         user.setEmail("gmail@gmail.com");
 
         userService.signUp(user);
-      
+        await().untilAsserted(() -> {
+                    var getMessages = greenMail.getReceivedMessages();
+                    assertEquals(1, getMessages.length);
+                }
+        );
         var confirmation = confirmationRepository.findAll().get(0);
-
         assertTrue(userRepository.findByEmail("gmail@gmail.com").isPresent());
         assertTrue(encoder.matches("123456",
                 userRepository.findByEmail("gmail@gmail.com").get().getPassword()));

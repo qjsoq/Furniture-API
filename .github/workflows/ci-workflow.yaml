@@ -18,9 +18,5 @@ jobs:
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
-          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
-          EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
           VERIFY_EMAIL_HOST: ${{ secrets.VERIFY_EMAIL_HOST }}
          
