@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(roleRepository.findByName("ROLE_USER").get());
         var confirmation = new Confirmation(user);
         confirmationRepository.save(confirmation);
-        //emailService.sendVerificationEmail(user, confirmation.getToken());
+        emailService.sendVerificationEmail(user, confirmation.getToken());
         return userRepository.save(user);
     }
 
