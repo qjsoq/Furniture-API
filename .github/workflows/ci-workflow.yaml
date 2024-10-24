@@ -20,6 +20,9 @@ jobs:
           JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
           VERIFY_EMAIL_HOST: ${{ secrets.VERIFY_EMAIL_HOST }}
       - run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/furniture-api-repo:latest .
-      - run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Login in Docker Hub
+        env:
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p $password
       - run: docker image push ${{ secrets.DOCKERHUB_USERNAME }}/furniture-api-repo:latest
          
