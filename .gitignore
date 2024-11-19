@@ -31,6 +31,7 @@ build/
 
 # File with passwords
 .env
+k8s/furniture-secret.yaml
 
 ### VS Code ###
 .vscode/

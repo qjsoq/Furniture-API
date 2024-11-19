@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: furniture-deployment
+  labels:
+    app: furniture-api
+spec:
+  selector:
+    matchLabels:
+      app: furniture-api
+      name: furniture-api-pod
+  template:
+    metadata:
+      name: furniture-api-pod
+      labels:
+        name: furniture-api-pod
+        app: furniture-api
+    spec:
+      containers:
+        - name: furniture-image
+          image: artamonovdima/furniture-api-repo
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql/furniture_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: rootpassword
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: furniture-api-secret
+                  key: JWT_SECRET
+            - name: JWT_ISSUER
+              valueFrom:
+                    secretKeyRef:
+                      name: furniture-api-secret
+                      key: JWT_ISSUER
+            - name: EMAIL_USERNAME
+              valueFrom:
+                    secretKeyRef:
+                      name: furniture-api-secret
+                      key: EMAIL_USERNAME
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                    secretKeyRef:
+                        name: furniture-api-secret
+                        key: EMAIL_PASSWORD
+            - name: EMAIL_HOST
+              valueFrom:
+                      secretKeyRef:
+                        name: furniture-api-secret
+                        key: EMAIL_HOST
+            - name: EMAIL_PORT
+              valueFrom:
+                    secretKeyRef:
+                        name: furniture-api-secret
+                        key: EMAIL_PORT
+            - name: VERIFY_EMAIL_HOST
+              valueFrom:
+                      secretKeyRef:
+                        name: furniture-api-secret
+                        key: VERIFY_EMAIL_HOST
+  replicas: 1
