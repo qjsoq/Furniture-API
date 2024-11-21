@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: furniture-service
+  labels:
+    app: furniture-api
+spec:
+  selector:
+    name: furniture-api-pod
+    app: furniture-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer

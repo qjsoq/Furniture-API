@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: mysql
+      app: furniture-api
+  template:
+    metadata:
+      labels:
+        name: mysql
+        app: furniture-api
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: rootpassword
+            - name: MYSQL_DATABASE
+              value: furniture_db
+            - name: MYSQL_USER
+              value: artamonov_dima
+            - name: MYSQL_PASSWORD
+              value: 12345Joj@
+          ports:
+            - containerPort: 3306
